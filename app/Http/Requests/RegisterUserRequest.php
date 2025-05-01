@@ -25,12 +25,25 @@ class RegisterUserRequest extends FormRequest
         $maxFileSizeInMB = (string)(1024 * 10);
 
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'regex:/^[\p{L}\p{N}_.]{3,16}$/u', 'string', 'max:255'],
             'email' => ['required', 'email', 'string', 'max:255', 'unique:users'],
-            //'password' => ['min:6', 'required_with:password_confirmation', 'same:password_confirmation'],
-            'password' => ['required', 'min:6', 'same:password_confirmation'],
-            'password_confirmation' => ['required'],
-            'file' => ['nullable', 'image', 'mimes:png,jpg,jpeg,svg', "max:$maxFileSizeInMB"],
+            'password' => ['required', 'min:6'],
+            'password_confirmation' => ['same:password'],
+            'file' => ['mimes:png,jpg,jpeg,svg', 'image', "max:$maxFileSizeInMB"],
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'required' => 'Поле обязательно для заполнения',
+            'name.regex' => 'Допустимы только символы А-Я а-я A-Z a-z . _',
+            'email' => 'Поле должно содержать валидный email адрес',
+            'email.unique' => 'Пользователь с таким email уже зарегистрирован',
+            'password_confirmation.same' => 'Значение должно совпадать со значением поля пароль',
+            'file.mimes' => 'Допустимы только png, jpeg и svg расширения',
+            'file.image' => 'Файл должен быть изображением',
+            'file.max' => 'Максимальный размер загружаемого файла 10MB',
         ];
     }
 }

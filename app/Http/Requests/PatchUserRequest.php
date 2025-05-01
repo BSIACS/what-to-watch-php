@@ -26,11 +26,23 @@ class PatchUserRequest extends FormRequest
         $maxFileSizeInMB = (string)(1024 * 10);
 
         return [
-            'name' => ['nullable', 'string', 'max:255'],
-            'email' => ['nullable', 'email', 'string', 'max:255'],
-            'password' => ['nullable', 'min:6', 'same:password_confirmation'],
-            'password_confirmation' => ['nullable'],
+            'name' => ['string', 'regex:/^[\p{L}\p{N}_.]{3,16}$/u', 'max:255'],
+            'email' => ['email', 'string', 'max:255'],
+            'password' => ['min:6'],
+            'password_confirmation' => [],
             'file' => ['nullable', 'image', 'mimes:png,jpg,jpeg,svg', "max:$maxFileSizeInMB"],
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'name.regex' => 'Допустимы только символы А-Я а-я A-Z a-z . _',
+            'email' => 'Поле должно содержать валидный email адрес',
+            'email.unique' => 'Пользователь с таким email уже зарегистрирован',
+            'file.mimes' => 'Допустимы только png, jpeg и svg расширения',
+            'file.image' => 'Файл должен быть изображением',
+            'file.max' => 'Максимальный размер загружаемого файла 10MB',
         ];
     }
 
@@ -38,21 +50,18 @@ class PatchUserRequest extends FormRequest
     {
         return [
             function (Validator $validator) {
-                if ($this->somethingElseIsInvalid($validator)) {
+                if ($validator->getValue('password') != '' && !$this->isPasswordConfirmationCorrect($validator)) {
                     $validator->errors()->add(
-                        'password',
-                        'Неверный пароль'
+                        'password_confirmation',
+                        'Значение должно совпадать со значением поля пароль'
                     );
                 }
             }
         ];
     }
 
-    public function somethingElseIsInvalid(Validator $validator): bool
+    public function isPasswordConfirmationCorrect(Validator $validator): bool
     {
-        return !Auth::guard('api')->attempt([
-            'email' => $validator->safe()->email,
-            'password' => $validator->safe()->password,
-        ]);
+        return $validator->safe()->password === $validator->safe()->password_confirmation;
     }
 }
