@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+//AUTH CONTROLLER
+Route::middleware(['throttle:api'])->group(function () {
+    Route::post('register', [\App\Http\Controllers\AuthController::class, 'register']);
+    Route::post('login', [\App\Http\Controllers\AuthController::class, 'login']);
+});
+
+Route::middleware(['throttle:api', 'auth:sanctum'])->get('logout', [\App\Http\Controllers\AuthController::class, 'logout']);
+
+
+//USER CONTROLLER
+Route::middleware(['throttle:api', 'auth:sanctum', 'role:admin,moderator,user'])->group(function () {
+    Route::get('user', [\App\Http\Controllers\UserController::class, 'getUser']);
+    Route::patch('user', [\App\Http\Controllers\UserController::class, 'patchUser']);
+    Route::post('user/avatar', [\App\Http\Controllers\UserController::class, 'saveOrReplaceUserAvatar']);
 });
