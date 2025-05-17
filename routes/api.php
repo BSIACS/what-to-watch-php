@@ -28,7 +28,5 @@ Route::middleware(['throttle:api', 'auth:sanctum'])->get('logout', [\App\Http\Co
 Route::middleware(['throttle:api', 'auth:sanctum', 'role:admin,moderator,user'])->group(function () {
     Route::get('user', [\App\Http\Controllers\UserController::class, 'getUser']);
     Route::patch('user', [\App\Http\Controllers\UserController::class, 'patchUser']);
+    Route::post('user/avatar', [\App\Http\Controllers\UserController::class, 'saveOrReplaceUserAvatar']);
 });
-
-
-

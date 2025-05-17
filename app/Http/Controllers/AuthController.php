@@ -6,7 +6,7 @@ use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\RegisterUserRequest;
 use App\Http\Resources\LoginResource;
 use App\Http\Resources\RegisterResource;
-use App\Services\FileStorageService;
+use App\Services\AuthService;
 use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -14,14 +14,15 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    function __construct(protected UserService $userService, protected FileStorageService $fileStorageService)
-    {
-    }
+    function __construct(
+        protected AuthService $authService,
+        protected UserService $userService,
+    ){}
 
     public function register(RegisterUserRequest $request): RegisterResource|JsonResponse
     {
         try {
-            $registeredUserData = $this->userService->register(
+            $registeredUserData = $this->authService->processRegister(
                 $request->get('name'),
                 $request->get('email'),
                 $request->get('password'),
@@ -30,16 +31,10 @@ class AuthController extends Controller
             return new JsonResponse(['message' => $exception->getMessage()], 500);
         }
 
-        $uploadedFile = $request->file('file');
-
-        if ($uploadedFile) {
-            $this->fileStorageService->saveUserAvatar($uploadedFile, $registeredUserData['user']->id);
-        }
-
         return new RegisterResource($registeredUserData['user'], $registeredUserData['token']);
     }
 
-    public function login(LoginUserRequest $request)//: LoginResource|JsonResponse
+    public function login(LoginUserRequest $request): LoginResource|JsonResponse
     {
         try {
             if (!Auth::guard('api')->attempt($request->only(['email', 'password']))) {
@@ -47,7 +42,7 @@ class AuthController extends Controller
                 return response()->json(['message: Неверный email или пароль'], 401);
             }
 
-            $userData = $this->userService->createToken($request->get('email'));
+            $userData = $this->authService->processLogin($request->get('email'));
         } catch (\Exception $exception) {
             return new JsonResponse(['message' => $exception->getMessage()], 500);
         }
@@ -59,7 +54,7 @@ class AuthController extends Controller
     {
         try {
             $user = Auth::user();
-            $user->tokens()->delete();
+            $this->authService->processLogout($user);
         } catch (\Exception $exception) {
             return new JsonResponse(['message' => $exception->getMessage()], 500);
         }
