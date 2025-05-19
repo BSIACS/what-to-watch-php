@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Genre;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -12,6 +13,7 @@ class DatabaseSeeder extends Seeder
 {
     private readonly array $users;
     private readonly array $roles;
+    private readonly array $genres;
 
     function __construct()
     {
@@ -35,6 +37,17 @@ class DatabaseSeeder extends Seeder
                 'role' => 'admin',
             ],
         ];
+
+        $this->genres = [
+            'Crime' => 'Crime',
+            'Thriller' => 'Thriller',
+            'Adventure' => 'Adventure',
+            'Comedy' => 'Comedy',
+            'Drama' => 'Drama',
+            'Action' => 'Action',
+            'Fantasy' => 'Fantasy',
+        ];
+
     }
     /**
      * Run the database seeds.
@@ -43,6 +56,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->seedRoles();
         $this->seedUsers();
+        $this->seedGenres();
     }
 
     private function seedRoles(): void {
@@ -71,6 +85,19 @@ class DatabaseSeeder extends Seeder
                     "email" => $user['email'],
                     "password" => $user['password'],
                     "role_id" => $role->id,
+                ]);
+            }
+        }
+    }
+
+    private function seedGenres(): void {
+        $count = Genre::query()->get()->count();
+
+        if($count <= 0) {
+            foreach ($this->genres as $genre) {
+                Genre::query()->create([
+                    'id' => Str::uuid(),
+                    'name' => $genre,
                 ]);
             }
         }

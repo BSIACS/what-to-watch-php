@@ -30,3 +30,9 @@ Route::middleware(['throttle:api', 'auth:sanctum', 'role:admin,moderator,user'])
     Route::patch('user', [\App\Http\Controllers\UserController::class, 'patchUser']);
     Route::post('user/avatar', [\App\Http\Controllers\UserController::class, 'saveOrReplaceUserAvatar']);
 });
+
+//GENRE CONTROLLER
+Route::middleware(['throttle:api', 'auth:sanctum', 'role:admin,moderator'])->group(function () {
+    Route::get('genre', [\App\Http\Controllers\GenreController::class, 'getAll']);
+    Route::patch('genre/{id}', [\App\Http\Controllers\GenreController::class, 'update']);
+});
