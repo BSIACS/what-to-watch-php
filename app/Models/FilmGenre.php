@@ -7,18 +7,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-
-class Genre extends Model
+class FilmGenre extends Model
 {
-    use HasFactory, HasUuids;
-
+//    use HasFactory, HasUuids;
+    protected $table = 'film_genre';
     protected $fillable = [
-        'id',
-        'name',
+        'film_id',
+        'genre_id',
     ];
 
-    public function films(): BelongsToMany
-    {
-        return $this->belongsToMany(Film::class, 'film_genre');
-    }
 }
