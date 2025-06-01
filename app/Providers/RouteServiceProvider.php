@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Film;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
@@ -24,10 +25,19 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->configureRateLimiting();
+        $this->configureRoutes();
+    }
+
+    protected function configureRateLimiting(): void
+    {
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
+    }
 
+    protected function configureRoutes(): void
+    {
         $this->routes(function () {
             Route::middleware('api')
                 ->prefix('api')
