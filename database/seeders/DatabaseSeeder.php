@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Comment;
 use App\Models\Film;
 use App\Models\FilmGenre;
 use App\Models\FilmStatus;
@@ -548,74 +549,78 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->seedRoles();
-        $this->seedUsers();
+        $this->seedUsers(10);
         $this->seedGenres();
         $this->seedFilmStatuses();
-
-        $filmCount = Film::query()->get()->count();
-        if($filmCount <= 0) {
-            $this->seedFilms(35);
-        }
+        $this->seedFilms(35);
+        $this->seedComments(100);
     }
 
     private function seedRoles(): void {
-        $count = DB::table('roles')->get()->count();
+        if(!$this->checkIsTableEmpty('roles')) {
+            return;
+        }
 
-        if($count <= 0) {
-            foreach ($this->roles as $role) {
-                DB::table('roles')->insert([
-                    'id' => Str::uuid(),
-                    'name' => $role,
-                ]);
-            }
+        foreach ($this->roles as $role) {
+            DB::table('roles')->insert([
+                'id' => Str::uuid(),
+                'name' => $role,
+            ]);
         }
     }
 
-    private function seedUsers(): void {
-        $count = DB::table('users')->get()->count();
-
-        if($count <= 0) {
-            foreach ($this->users as $user) {
-                $role = Role::query()->where('name', '=', $user['role'])->first();
-
-                User::query()->create([
-                    "id" => Str::uuid(),
-                    "name" => $user['name'],
-                    "email" => $user['email'],
-                    "password" => $user['password'],
-                    "role_id" => $role->id,
-                ]);
-            }
+    private function seedUsers(int $count): void {
+        if(!$this->checkIsTableEmpty('users')) {
+            return;
         }
+
+        foreach ($this->users as $user) {
+            $role = Role::query()->where('name', '=', $user['role'])->first();
+
+            User::query()->create([
+                "id" => Str::uuid(),
+                "name" => $user['name'],
+                "email" => $user['email'],
+                "password" => $user['password'],
+                "role_id" => $role->id,
+            ]);
+        }
+
+        $role = Role::query()->where('name', '=', 'user')->first();
+        User::factory($count - 2)->create(['role_id' => $role->id]);
     }
 
     private function seedGenres(): void {
-        $count = Genre::query()->get()->count();
+        if(!$this->checkIsTableEmpty('genres')) {
+            return;
+        }
 
-        if($count <= 0) {
-            foreach ($this->genres as $genre) {
-                Genre::query()->create([
-                    'id' => Str::uuid(),
-                    'name' => $genre,
-                ]);
-            }
+        foreach ($this->genres as $genre) {
+            Genre::query()->create([
+                'id' => Str::uuid(),
+                'name' => $genre,
+            ]);
         }
     }
 
     private function seedFilmStatuses(): void {
-        $count = FilmStatus::query()->get()->count();
+        if(!$this->checkIsTableEmpty('film_statuses')) {
+            return;
+        }
 
-        if($count <= 0) {
-            foreach ($this->filmStatuses as $filmStatus) {
-                FilmStatus::query()->create([
-                    'id' => Str::uuid(),
-                    'name' => $filmStatus,
-                ]);
-            }
+        foreach ($this->filmStatuses as $filmStatus) {
+            FilmStatus::query()->create([
+                'id' => Str::uuid(),
+                'name' => $filmStatus,
+            ]);
         }
     }
 
     private function seedFilms(int $count): void {
+        if(!$this->checkIsTableEmpty('films')) {
+            return;
+        }
+
         $status = FilmStatus::query()->where('name', '=', 'ready')->first();
 
         for ($i = 0; $i < $count; $i++) {
@@ -651,15 +656,20 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
+    }
 
-//        $count = Film::query()->get()->count();
+    private function seedComments(int $count): void {
+        if(!$this->checkIsTableEmpty('comments')) {
+            return;
+        }
 
+        Comment::factory($count)->create();
+    }
 
+    private function checkIsTableEmpty(string $tableName): bool
+    {
+        $count = DB::table($tableName)->get()->count();
 
-//        $films = Film::factory(3)
-//            ->hasAttached(
-//                Genre::query()->whereIn('name', ['Action, '])->get()
-//            )
-//            ->create();
+        return $count === 0;
     }
 }
