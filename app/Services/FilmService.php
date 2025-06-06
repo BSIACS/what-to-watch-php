@@ -6,6 +6,7 @@ use App\DTO\GetFilmsDTO;
 use App\Http\Resources\GetFilmByIdResource;
 use App\Http\Resources\GetFilmsResource;
 use App\Models\Film;
+use App\Models\Genre;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -88,5 +89,31 @@ class FilmService
         }
 
         return  new GetFilmByIdResource($film, $genres);
+    }
+
+    public function getSimilarFilms(string $id): AnonymousResourceCollection
+    {
+        $film = Film::query()->find($id) ?? throw new NotFoundHttpException('Фильма с таким id не существует');
+
+        $genres = $film->genres()->pluck('id')->toArray();
+
+        $films = Film::query()
+            ->select('films.name',
+                'films.id',
+                'films.preview_image',
+                'films.preview_video_link',
+                'film_statuses.name as status',
+                'films.released',
+                DB::raw('rating / IF(score_count = 0, 1, score_count) AS rating')
+            )
+            ->join('film_genre', 'films.id', '=', 'film_genre.film_id')
+            ->join('film_statuses', 'films.status_id',  '=', 'film_statuses.id')
+            ->whereIn('genre_id', $genres)
+            ->groupBy('films.id')
+            ->inRandomOrder()
+            ->limit(3)
+            ->get();
+
+        return GetFilmsResource::collection($films);
     }
 }

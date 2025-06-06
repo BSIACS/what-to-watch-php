@@ -39,9 +39,10 @@ Route::middleware(['throttle:api', 'auth:sanctum', 'role:admin,moderator'])->gro
 
 
 //FILM CONTROLLER
-Route::middleware(['throttle:api', 'auth:sanctum', 'role:admin,moderator'])->group(function () {
+Route::middleware(['throttle:api'])->group(function () {
     Route::get('films', [\App\Http\Controllers\FilmController::class, 'getFilms']);
     Route::get('films/{id}', [\App\Http\Controllers\FilmController::class, 'getFilmById']);
+    Route::get('films/{id}/similar', [\App\Http\Controllers\FilmController::class, 'getSimilarFilms']);
 });
 
 

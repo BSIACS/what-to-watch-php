@@ -52,4 +52,18 @@ class FilmController extends Controller
 
         return $resource;
     }
+
+    public function getSimilarFilms(string $id): JsonResponse | AnonymousResourceCollection
+    {
+        try {
+            $resource = $this->filmService->getSimilarFilms($id);
+        } catch (\Exception $exception) {
+            if($exception instanceof NotFoundHttpException) {
+                return new JsonResponse(['message' => $exception->getMessage()], 404);
+            }
+            return new JsonResponse(['message' => $exception->getMessage()], 500);
+        }
+
+        return $resource;
+    }
 }
