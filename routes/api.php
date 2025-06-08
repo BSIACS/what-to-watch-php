@@ -56,3 +56,12 @@ Route::middleware(['throttle:api', 'auth:sanctum', 'role:admin,moderator,user'])
     Route::patch('comments/{id}', [\App\Http\Controllers\CommentController::class, 'patchComment']);
     Route::delete('comments/{id}', [\App\Http\Controllers\CommentController::class, 'deleteComment']);
 });
+
+//PROMO CONTROLLER
+Route::middleware(['throttle:api'])->group(function () {
+    Route::get('promo', [\App\Http\Controllers\PromoController::class, 'getPromo']);
+});
+
+Route::middleware(['throttle:api', 'auth:sanctum', 'role:admin,moderator'])->group(function () {
+    Route::post('promo/{id}', [\App\Http\Controllers\PromoController::class, 'setPromo']);
+});
