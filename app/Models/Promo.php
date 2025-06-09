@@ -11,7 +11,6 @@ class Promo extends Model
 {
     use HasFactory, HasUuids;
 
-
     protected $table = 'promo';
 
     protected $fillable = [

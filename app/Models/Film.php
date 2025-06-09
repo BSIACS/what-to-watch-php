@@ -38,6 +38,11 @@ class Film extends Model
         return $this->belongsToMany(Genre::class, 'film_genre');
     }
 
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'film_user');
+    }
+
     public function status(): BelongsTo
     {
         return $this->belongsTo(FilmStatus::class);
