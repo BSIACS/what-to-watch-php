@@ -27,8 +27,8 @@ class GetFilmsRequest extends FormRequest
     {
 
         return [
-            'page' => [],
-            'genre' => [],
+            'page' => ['integer'],
+            'genre' => ['exists:genres,name'],
             'status' => [Rule::in(['ready','pending','on_moderation'])],
             'order_by' => [Rule::in(['released','rating'])],
             'order_to' => [Rule::in(['asc','desc'])],
@@ -54,7 +54,20 @@ class GetFilmsRequest extends FormRequest
     public function messages()
     {
         return [
+            // Пагинация
+            'page.integer' => 'Номер страницы должен быть целым числом',
 
+            // Жанр
+            'genre.exists' => 'Указанный жанр не существует в базе данных',
+
+            // Статус
+            'status.in' => 'Неверный статус. Допустимые значения: ready, pending, on_moderation',
+
+            // Сортировка по полю
+            'order_by.in' => 'Неверное поле для сортировки. Допустимые значения: released, rating',
+
+            // Направление сортировки
+            'order_to.in' => 'Неверное направление сортировки. Допустимые значения: asc (по возрастанию), desc (по убыванию)'
         ];
     }
 }

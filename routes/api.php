@@ -45,6 +45,11 @@ Route::middleware(['throttle:api'])->group(function () {
     Route::get('films/{id}/similar', [\App\Http\Controllers\FilmController::class, 'getSimilarFilms']);
 });
 
+Route::middleware(['throttle:api', 'auth:sanctum', 'role:admin,moderator'])->group(function () {
+    Route::post('films', [\App\Http\Controllers\FilmController::class, 'createFilm']);
+    Route::patch('films/{id}', [\App\Http\Controllers\FilmController::class, 'patchFilm']);
+});
+
 
 //COMMENT CONTROLLER
 Route::middleware(['throttle:api'])->group(function () {
