@@ -13,7 +13,7 @@ class PatchFilmDTO
     private ?int $runtime = null;
     private ?string $imdbId = null;
     private ?string $genres = null;
-    private ?string $statusId = null;
+    private ?string $status = null;
 
 
     public function __construct(
@@ -55,8 +55,8 @@ class PatchFilmDTO
             $this->setGenres($data['genres']);
         }
 
-        if (isset($data['status_id'])) {
-            $this->setStatusId($data['status_id']);
+        if (isset($data['status'])) {
+            $this->setStatus($data['status']);
         }
     }
 
@@ -105,9 +105,9 @@ class PatchFilmDTO
         $this->genres = $genres;
     }
 
-    public  function setStatusId(string $statusId): void
+    public  function setStatus(string $statusId): void
     {
-        $this->statusId = $statusId;
+        $this->status = $statusId;
     }
 
     public function getName(): string
@@ -155,9 +155,9 @@ class PatchFilmDTO
         return $this->genres;
     }
 
-    public function getStatusId(): string
+    public function getStatus(): string
     {
-        return $this->statusId;
+        return $this->status;
     }
 
     public function fromRequest() : array
@@ -168,9 +168,8 @@ class PatchFilmDTO
             'released' => $this->released,
             'description' => $this->description,
             'director' => $this->director,
-            'starring' => implode(', ', $this->starring),
+            'starring' => $this->starring !== null ? implode(', ', $this->starring) : null,
             'run_time' => $this->runtime,
-            'status_id' => $this->statusId,
         ])->filter()->toArray();
 
         return $result;

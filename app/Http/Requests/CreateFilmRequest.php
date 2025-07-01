@@ -2,13 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Film;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\Validator;
+
 
 class CreateFilmRequest extends FormRequest
 {
@@ -33,7 +29,7 @@ class CreateFilmRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'imdbId' => ['required'],
+            'imdbId' => ['required', "regex:/^tt\d{7}$/"],
         ];
     }
 
@@ -41,7 +37,7 @@ class CreateFilmRequest extends FormRequest
     {
         return [
             'required' => 'Поле обязательно для заполнения',
-
+            'imdbId.regex' => 'Поле должно соответствовать сигнатуре imdb идентификатора'
         ];
     }
 }

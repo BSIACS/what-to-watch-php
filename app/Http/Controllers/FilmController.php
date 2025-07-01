@@ -112,8 +112,4 @@ class FilmController extends Controller
 
         return new JsonResponse(['message' => 'Данные фильма успешно отредактированы'], 200);
     }
-
-    public function setReadyStatus(string $id) {
-
-    }
 }

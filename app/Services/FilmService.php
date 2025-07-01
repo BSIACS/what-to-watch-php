@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Constants\PaginationConstants;
 use App\DTO\GetFilmsDTO;
 use App\DTO\PatchFilmDTO;
 use App\Http\Resources\GetFilmByIdResource;
@@ -26,8 +27,7 @@ class FilmService
     public function getFilms(GetFilmsDTO $dto): AnonymousResourceCollection
     {
         $genre = $dto->getGenre();
-        $filmsPerPage = 4;
-        $skipCount = $filmsPerPage * ($dto->getPage() - 1);
+        $skipCount = PaginationConstants::FILMS_PER_PAGE * ($dto->getPage() - 1);
 
         $films = Film::query()
             ->whereHas('genres', function($query) use ($genre) {
@@ -48,19 +48,19 @@ class FilmService
             ->where('film_statuses.name', '=', $dto->getStatus())
             ->orderBy($dto->getOrderBy(), $dto->getOrderTo())
             ->skip($skipCount)
-            ->take($filmsPerPage)
+            ->take(PaginationConstants::FILMS_PER_PAGE)
             ->get();
 
 
         return GetFilmsResource::collection($films)
             ->additional([
                 'current_page' => $dto->getPage(),
-                'per_page' => $filmsPerPage,
-                'total_pages' => $this->getPageCountByFilters($filmsPerPage, $dto->getGenre(), $dto->getStatus()),
+                'per_page' => PaginationConstants::FILMS_PER_PAGE,
+                'total_pages' => $this->getPageCountByFilters($dto->getGenre(), $dto->getStatus()),
             ]);
     }
 
-    private function getPageCountByFilters($filmsPerPage, $genre, $status): int
+    private function getPageCountByFilters($genre, $status): int
     {
         $filmCount = Film::query()
             ->whereHas('genres', function($query) use ($genre) {
@@ -81,7 +81,7 @@ class FilmService
             ->where('film_statuses.name', '=', $status)
             ->count();
 
-        return (int) ceil($filmCount / $filmsPerPage);
+        return (int) ceil($filmCount / PaginationConstants::FILMS_PER_PAGE);
     }
 
     public function getFilmById(string $id): GetFilmByIdResource
@@ -161,6 +161,7 @@ class FilmService
         }
 
         $updateData = $dto->fromRequest();
+        if($dto->getStatus()) $updateData['status_id'] = FilmStatus::query()->where('name', '=', $dto->getStatus())->first()->id;
         $filesData = [];
 
         if($posterImage !== null) $filesData[] = ['file' => $posterImage, 'dbColumnName' => 'poster_image', 'catalogName' => 'poster'];
@@ -181,7 +182,7 @@ class FilmService
         }
 
         $film->update($updateData);
-
+        $film->save();
         $this->deleteOldFiles($oldFilePathsToDelete);
     }
 
