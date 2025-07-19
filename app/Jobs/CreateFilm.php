@@ -40,7 +40,7 @@ class CreateFilm implements ShouldQueue
             'released' => $film['Year'],
             'description' => $film['Plot'],
             'director' => $film['Director'],
-            'starring' => $film['Actors'],
+            'starring' => explode(', ', $film['Actors']),
             'genres' => $film['Genre'],
             'runtime' => $this->convertRuntimeFromStringToInt($film['Runtime']),
         ]);

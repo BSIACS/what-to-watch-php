@@ -5,15 +5,15 @@ namespace App\Services;
 use App\Constants\PaginationConstants;
 use App\DTO\GetFilmsDTO;
 use App\DTO\PatchFilmDTO;
-use App\Http\Resources\GetFilmByIdResource;
-use App\Http\Resources\GetFilmsResource;
+use App\Http\Resources\FilmShortCollection;
+use App\Http\Resources\PaginatedFilmShortCollection;
+use App\Http\Resources\FilmResource;
 use App\Models\Film;
 use App\Models\FilmGenre;
 use App\Models\FilmStatus;
 use App\Models\Genre;
 use App\Services\Interfaces\FileStorageService;
 use Exception;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -24,7 +24,7 @@ class FilmService
 {
     function __construct(protected FileStorageService $fileStorageService){}
 
-    public function getFilms(GetFilmsDTO $dto): AnonymousResourceCollection
+    public function getFilms(GetFilmsDTO $dto): PaginatedFilmShortCollection
     {
         $genre = $dto->getGenre();
         $skipCount = PaginationConstants::FILMS_PER_PAGE * ($dto->getPage() - 1);
@@ -51,9 +51,7 @@ class FilmService
             ->take(PaginationConstants::FILMS_PER_PAGE)
             ->get();
 
-
-        return GetFilmsResource::collection($films)
-            ->additional([
+        return (new PaginatedFilmShortCollection($films))->additional([
                 'current_page' => $dto->getPage(),
                 'per_page' => PaginationConstants::FILMS_PER_PAGE,
                 'total_pages' => $this->getPageCountByFilters($dto->getGenre(), $dto->getStatus()),
@@ -84,7 +82,7 @@ class FilmService
         return (int) ceil($filmCount / PaginationConstants::FILMS_PER_PAGE);
     }
 
-    public function getFilmById(string $id): GetFilmByIdResource
+    public function getFilmById(string $id): FilmResource
     {
         $film = Film::query()
             ->with('genres')
@@ -97,10 +95,10 @@ class FilmService
             $genres[] = $genre->name;
         }
 
-        return  new GetFilmByIdResource($film, $genres);
+        return new FilmResource($film, $genres);
     }
 
-    public function getSimilarFilms(string $id): AnonymousResourceCollection
+    public function getSimilarFilms(string $id): FilmShortCollection
     {
         $film = Film::query()->find($id) ?? throw new NotFoundHttpException('Фильма с таким id не существует');
 
@@ -118,12 +116,13 @@ class FilmService
             ->join('film_genre', 'films.id', '=', 'film_genre.film_id')
             ->join('film_statuses', 'films.status_id',  '=', 'film_statuses.id')
             ->whereIn('genre_id', $genres)
+            ->where('film_statuses.name', '=', 'ready')
             ->groupBy('films.id')
             ->inRandomOrder()
-            ->limit(3)
+            ->limit(4)
             ->get();
 
-        return GetFilmsResource::collection($films);
+        return new FilmShortCollection($films);
     }
 
     public function createFilm(string $imdbId): void
@@ -161,7 +160,12 @@ class FilmService
         }
 
         $updateData = $dto->fromRequest();
-        if($dto->getStatus()) $updateData['status_id'] = FilmStatus::query()->where('name', '=', $dto->getStatus())->first()->id;
+        if($dto->getStatus()){
+            $updateData['status_id'] = FilmStatus::query()->where('name', '=', $dto->getStatus())->first()->id;
+        }
+        else {
+            $updateData['status_id'] = FilmStatus::query()->where('name', '=', 'ready')->first()->id;
+        }
         $filesData = [];
 
         if($posterImage !== null) $filesData[] = ['file' => $posterImage, 'dbColumnName' => 'poster_image', 'catalogName' => 'poster'];

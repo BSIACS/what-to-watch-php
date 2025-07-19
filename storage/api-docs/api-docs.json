@@ -1,0 +1,880 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "What to watch API",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api": {},
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "User registration",
+                "description": "Process registration",
+                "operationId": "8a56853624e025573120a09a4c75d468",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegisterUserRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "List of films",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TokenResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "User login",
+                "description": "Process login",
+                "operationId": "a3b306d14572d1f4bd6c064b3233e7b8",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginUserRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "List of films",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TokenResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "User logout",
+                "description": "Process logout",
+                "operationId": "fe8f3429cd6979b3b4517e186505f9f9",
+                "responses": {
+                    "200": {
+                        "description": "Successful logout",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Токены удалены"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/films": {
+            "get": {
+                "tags": [
+                    "Films"
+                ],
+                "summary": "Get a list of films",
+                "description": "Provides information about the first 8 films unless otherwise specified (the page parameter).",
+                "operationId": "6e6d7d0ac1875172a482d9169a409385",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "genre",
+                        "in": "query",
+                        "description": "Genre name to filter by e. g.: Drama, Action, Comedy, etc.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "schema": {
+                            "enum": [
+                                "ready",
+                                "pending",
+                                "on_moderation"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "order_by",
+                        "in": "query",
+                        "schema": {
+                            "enum": [
+                                "released",
+                                "rating"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "order_to",
+                        "in": "query",
+                        "schema": {
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of films",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedFilmShortCollection"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Films"
+                ],
+                "summary": "Create film by imdbId",
+                "description": "Create film by imdbId. To obtain some of the information, an external service API is used (omdbapi.com). Authorization: only for moderator",
+                "operationId": "aff27df02f5281bf651b9e1c88845ee2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateFilmRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Job was successfully created",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/films/{id}": {
+            "get": {
+                "tags": [
+                    "Films"
+                ],
+                "summary": "Provides film info by id",
+                "description": "Provides film info by id.",
+                "operationId": "462e80a3204b42e5c25fec1a482d70df",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "schema": {
+                            "type": "string",
+                            "default": "010a26e3-b835-4611-bfe9-d7bba5324416"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Film detail info",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FilmResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Film with the requested ID does not exist"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Films"
+                ],
+                "summary": "Patch film by id",
+                "description": "Update film info according to the submitted form data. Authorization: only for moderator",
+                "operationId": "c6aa65a0616cb5de5db2c26452461272",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Film id",
+                        "example": "9f3d5512-deac-43d6-bd9f-42d7eaf6b4cf"
+                    },
+                    {
+                        "name": "_method",
+                        "in": "query",
+                        "example": "PATCH"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchFilmRequest"
+                            },
+                            "encoding": {
+                                "starring[]": {
+                                    "mediaType": "multipart/form-data",
+                                    "style": "form",
+                                    "explode": true
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Film data was successfully patched",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Данные фильма успешно отредактированы"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Film with specified id not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Фильма с таким id не существует"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/films/{id}/similar": {
+            "get": {
+                "tags": [
+                    "Films"
+                ],
+                "summary": "Get a list of similar films",
+                "description": "The method returns a list of 4 matching movies. Similarity is determined by belonging to the same genres as the original movie (any of the available ones).",
+                "operationId": "9fb33626b2eff9e264d40ebd22f17b4b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of films",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FilmShortCollection"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Film with specified id not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Фильма с таким id не существует"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get user data",
+                "description": "Get user data",
+                "operationId": "a65897868f1d4105404848067624d207",
+                "responses": {
+                    "200": {
+                        "description": "List of films",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get user data",
+                "description": "Get user data",
+                "operationId": "07961faf38790d89b63ebf00b8cabb58",
+                "parameters": [
+                    {
+                        "name": "_method",
+                        "in": "query",
+                        "example": "PATCH"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchUserRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "List of films",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/user/avatar": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Save user avatar",
+                "description": "Save user avatar",
+                "operationId": "a4c7ce6e96fe7d0c733a2cdb99b8df4e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SaveOrReplaceUserAvatarRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Film with specified id not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "avatarPath": {
+                                            "type": "string",
+                                            "example": "ef7d1976-5cd5-4c99-9bdf-cbd2209f214e/avatar/KgoFL8KpEtajLXJ225JjcMBIbMlKbXVd.jpg"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "CreateFilmRequest": {
+                "properties": {
+                    "imdbId": {
+                        "description": "IMDb ID",
+                        "type": "string",
+                        "example": "tt0120102"
+                    }
+                },
+                "type": "object"
+            },
+            "LoginUserRequest": {
+                "properties": {
+                    "email": {
+                        "description": "User email",
+                        "type": "string",
+                        "example": "ivan@somemail.ru",
+                        "nullable": false
+                    },
+                    "password": {
+                        "description": "Password",
+                        "type": "string",
+                        "example": "ud5R#gh78Qi!6",
+                        "nullable": false
+                    }
+                },
+                "type": "object"
+            },
+            "PatchFilmRequest": {
+                "properties": {
+                    "name": {
+                        "description": "Film title",
+                        "type": "string",
+                        "example": "American History X",
+                        "nullable": true
+                    },
+                    "posterImage": {
+                        "description": "Big poster",
+                        "type": "file",
+                        "nullable": true
+                    },
+                    "previewImage": {
+                        "description": "Preview (small image)",
+                        "type": "file",
+                        "nullable": true
+                    },
+                    "backgroundImage": {
+                        "description": "Background image",
+                        "type": "file",
+                        "nullable": true
+                    },
+                    "backgroundColor": {
+                        "description": "Color in hexadecimal encoding (#FFFFFF)",
+                        "type": "string",
+                        "example": "",
+                        "nullable": true
+                    },
+                    "released": {
+                        "description": "Year of release",
+                        "type": "integer",
+                        "example": 1998,
+                        "nullable": true
+                    },
+                    "description": {
+                        "description": "Description",
+                        "type": "string",
+                        "example": "",
+                        "nullable": true
+                    },
+                    "starring[]": {
+                        "description": "List of actors",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "example": "Иван Иванов"
+                        },
+                        "collectionFormat": "multi",
+                        "example": [
+                            "Edward Norton",
+                            "Edward Furlong"
+                        ],
+                        "nullable": true
+                    },
+                    "runtime": {
+                        "description": "Movie duration",
+                        "type": "integer",
+                        "example": "",
+                        "nullable": true
+                    },
+                    "video": {
+                        "description": "Video file",
+                        "type": "file",
+                        "nullable": true
+                    },
+                    "previewVideo": {
+                        "description": "Preview video file",
+                        "type": "file",
+                        "nullable": true
+                    },
+                    "status": {
+                        "description": "Status: ready, pending, on_moderation",
+                        "type": "string",
+                        "enum": [
+                            "ready",
+                            "pending",
+                            "on_moderation"
+                        ],
+                        "example": "",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "PatchUserRequest": {
+                "properties": {
+                    "name": {
+                        "description": "User name",
+                        "type": "string",
+                        "example": "Ivan",
+                        "nullable": false
+                    },
+                    "email": {
+                        "description": "User email",
+                        "type": "string",
+                        "example": "ivan@somemail.ru",
+                        "nullable": false
+                    },
+                    "password": {
+                        "description": "Password",
+                        "type": "string",
+                        "example": "ud5R#gh78Qi!6",
+                        "nullable": false
+                    },
+                    "password_confirmation": {
+                        "description": "Password confirmation",
+                        "type": "string",
+                        "example": "ud5R#gh78Qi!6",
+                        "nullable": false
+                    }
+                },
+                "type": "object"
+            },
+            "RegisterUserRequest": {
+                "properties": {
+                    "name": {
+                        "description": "User name",
+                        "type": "string",
+                        "example": "Ivan",
+                        "nullable": false
+                    },
+                    "email": {
+                        "description": "User email",
+                        "type": "string",
+                        "example": "ivan@somemail.ru",
+                        "nullable": false
+                    },
+                    "password": {
+                        "description": "Password",
+                        "type": "string",
+                        "example": "ud5R#gh78Qi!6",
+                        "nullable": false
+                    },
+                    "password_confirmation": {
+                        "description": "Password confirmation",
+                        "type": "string",
+                        "example": "ud5R#gh78Qi!6",
+                        "nullable": false
+                    }
+                },
+                "type": "object"
+            },
+            "SaveOrReplaceUserAvatarRequest": {
+                "properties": {
+                    "file": {
+                        "description": "User avatar (png, jpg, jpeg, svg)",
+                        "type": "file",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "FilmResource": {
+                "title": "FilmResource",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "010a26e3-b835-4611-bfe9-d7bba5324416"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "American History X"
+                    },
+                    "poster_image": {
+                        "type": "string",
+                        "example": "poster/wvOl9GlXqt0e3MuXDpNARfATfVUkSp8e.jpg"
+                    },
+                    "preview_image": {
+                        "type": "string",
+                        "example": "preview/ZfDXNJiAqsKfHpIOsmNrByopDahtOsVn.jpg"
+                    },
+                    "background_image": {
+                        "type": "string",
+                        "example": "background/dJK1sOIlbTCOMjPaY48uXW7h6V71Bun3.jpg"
+                    },
+                    "background_color": {
+                        "type": "string"
+                    },
+                    "genres": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": [
+                            "Drama",
+                            "Action"
+                        ]
+                    },
+                    "released": {
+                        "type": "integer",
+                        "example": 1998
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Living a life marked by violence, neo-Nazi Derek finally goes to prison after killing two black youths. Upon his release, Derek vows to change; he hopes to prevent his brother, Danny, who idolizes Derek, from following in his foot..."
+                    },
+                    "director": {
+                        "type": "string",
+                        "example": "Tony Kaye"
+                    },
+                    "starring": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": [
+                            "Edward Norton",
+                            "Edward Furlong",
+                            "Beverly D'Angelo"
+                        ]
+                    },
+                    "run_time": {
+                        "type": "integer",
+                        "example": 119
+                    },
+                    "video_link": {
+                        "type": "string",
+                        "example": "video/ha02ATj7xcrlkKTePBiHG8FzHYqgkVIQ.mp4"
+                    },
+                    "preview_video_link": {
+                        "type": "string",
+                        "example": "previewVideo/IdpzDUwjwYMsSmYb0b7CGo59pgwiLN02.mp4"
+                    },
+                    "rating": {
+                        "type": "integer",
+                        "example": 4.9
+                    }
+                },
+                "type": "object"
+            },
+            "FilmShortCollection": {
+                "title": "FilmShortCollection",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/FilmShortResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "FilmShortResource": {
+                "title": "FilmShortResource",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {},
+                    "preview_image": {},
+                    "preview_video_link": {}
+                },
+                "type": "object"
+            },
+            "LogedUserResource": {
+                "title": "LogedUserResource",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "avatar_path": {
+                        "type": "string"
+                    },
+                    "token": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "PaginatedFilmShortCollection": {
+                "title": "PaginatedFilmShortCollection",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/FilmShortResource"
+                        }
+                    },
+                    "current_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 8
+                    },
+                    "total_pages": {
+                        "type": "integer",
+                        "example": 4
+                    }
+                },
+                "type": "object"
+            },
+            "RegisteredUserResource": {
+                "title": "RegisteredUserResource",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "token": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "TokenResource": {
+                "title": "TokenResource",
+                "properties": {
+                    "token": {
+                        "type": "string",
+                        "example": "0faa527e-deb5-4e92-84f5-b08355d88350|c5O42jaXgOtaSin7KvU9EhF73jXlcFuwFpwOfZE2b4c34717"
+                    }
+                },
+                "type": "object"
+            },
+            "UserResource": {
+                "title": "UserResource",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Ivan"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "ivan@somemail.com"
+                    },
+                    "role": {
+                        "type": "string",
+                        "example": "User"
+                    },
+                    "avatarPath": {
+                        "type": "string",
+                        "example": "ef7d1976-5cd5-4c99-9bdf-cbd2209f214e/avatar/KgoFL8KpEtajLXJ225JjcMBIbMlKbXVd.jpg"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "sanctumAuth": {
+                "type": "http",
+                "description": "Bearer token for authentication",
+                "name": "Authorization",
+                "in": "header",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
+            "name": "Films",
+            "description": "Films"
+        },
+        {
+            "name": "User",
+            "description": "User"
+        }
+    ]
+}

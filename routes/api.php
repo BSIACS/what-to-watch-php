@@ -20,7 +20,7 @@ Route::middleware(['throttle:api'])->group(function () {
     Route::post('login', [\App\Http\Controllers\AuthController::class, 'login']);
 });
 
-Route::middleware(['throttle:api', 'auth:sanctum'])->get('logout', [\App\Http\Controllers\AuthController::class, 'logout']);
+Route::middleware(['throttle:api', 'auth:sanctum'])->post('logout', [\App\Http\Controllers\AuthController::class, 'logout']);
 
 
 //USER CONTROLLER
@@ -45,9 +45,19 @@ Route::middleware(['throttle:api'])->group(function () {
     Route::get('films/{id}/similar', [\App\Http\Controllers\FilmController::class, 'getSimilarFilms']);
 });
 
-Route::middleware(['throttle:api', 'auth:sanctum', 'role:admin,moderator'])->group(function () {
+Route::middleware(['throttle:api'])->group(function () {
     Route::post('films', [\App\Http\Controllers\FilmController::class, 'createFilm']);
     Route::patch('films/{id}', [\App\Http\Controllers\FilmController::class, 'patchFilm']);
+});
+
+//TEST CONTROLLER
+Route::middleware(['throttle:api'])->group(function () {
+    Route::get('publicEndpoint', [\App\Http\Controllers\FilmController::class, 'publicEndpoint']);
+});
+
+Route::middleware(['throttle:api', 'auth:sanctum', 'role:admin,moderator'])->group(function () {
+    Route::get('privateEndpoint', [\App\Http\Controllers\FilmController::class, 'privateEndpoint']);
+    Route::get('privateEndpointWithAttributes', [\App\Http\Controllers\FilmController::class, 'privateEndpointWithAttributes']);
 });
 
 

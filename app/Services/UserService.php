@@ -21,6 +21,7 @@ class UserService
     {
         $foundUser = User::query()->where('id', $id)->first();
         $foundUser->update($patchData);
+        $foundUser->save();
 
         return $foundUser;
     }

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
+
 class GetFilmsRequest extends FormRequest
 {
     /**

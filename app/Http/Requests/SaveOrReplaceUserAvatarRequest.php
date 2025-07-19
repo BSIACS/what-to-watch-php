@@ -3,11 +3,17 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Validator;
+use Illuminate\Http\UploadedFile;
+use OpenApi\Attributes as OA;
 
+#[OA\Schema(
+    schema: 'SaveOrReplaceUserAvatarRequest',
+    type: 'object'
+)]
 class SaveOrReplaceUserAvatarRequest extends FormRequest
 {
+    #[OA\Property(property: 'file', description: 'User avatar (png, jpg, jpeg, svg)', type: 'file', nullable: true)]
+    public UploadedFile $file;
     /**
      * Determine if the user is authorized to make this request.
      */

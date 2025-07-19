@@ -4,13 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PatchUserRequest;
 use App\Http\Requests\SaveOrReplaceUserAvatarRequest;
-use App\Http\Resources\GetUserResource;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\UserAvatarStorageService;
 use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use OpenApi\Attributes as OA;
 
 
 class UserController extends Controller
@@ -19,14 +19,47 @@ class UserController extends Controller
         protected UserService $userService,
         protected UserAvatarStorageService $userAvatarStorageService) {}
 
-    public function getUser()
+    #[OA\Get(
+        path: '/api/user',
+        description: 'Get user data',
+        summary: 'Get user data',
+        security: [["sanctumAuth" => []]],
+        tags: ['User'],
+        parameters: [
+        ],
+        responses: [new OA\Response(
+            response: 200,
+            description: 'List of films',
+            content: new OA\JsonContent(ref: '#/components/schemas/UserResource'))]
+    )]
+    public function getUser(): UserResource
     {
         $user = Auth::user();
 
-        return new GetUserResource($user);
+        return new UserResource($user);
     }
 
-    public function patchUser(PatchUserRequest $request): GetUserResource|JsonResponse
+    #[OA\Post(
+        path: '/api/user',
+        description: 'Get user data',
+        summary: 'Get user data',
+        security: [["sanctumAuth" => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\MediaType(
+                mediaType: 'multipart/form-data',
+                schema: new OA\Schema(ref: '#/components/schemas/PatchUserRequest'),
+            )),
+        tags: ['User'],
+        parameters: [
+            new OA\Parameter(name: '_method', in: 'query', example: 'PATCH'),
+        ],
+        responses: [new OA\Response(
+            response: 200,
+            description: 'List of films',
+            content: new OA\JsonContent(ref: '#/components/schemas/UserResource'))]
+    )]
+    public function patchUser(PatchUserRequest $request): UserResource|JsonResponse
     {
         try {
             $user = Auth::user();
@@ -36,10 +69,33 @@ class UserController extends Controller
             return new JsonResponse(['message' => $exception->getMessage()], 500);
         }
 
-        return new GetUserResource($patchedUser);
+        return new UserResource($patchedUser);
     }
 
-    public function saveOrReplaceUserAvatar(SaveOrReplaceUserAvatarRequest $request)
+    #[OA\Post(
+        path: '/api/user/avatar',
+        description: 'Save user avatar',
+        summary: 'Save user avatar',
+        security: [["sanctumAuth" => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\MediaType(
+                mediaType: 'multipart/form-data',
+                schema: new OA\Schema(ref: '#/components/schemas/SaveOrReplaceUserAvatarRequest'),
+            )),
+        tags: ['User'],
+        responses: [new OA\Response(
+                response: 200,
+                description: 'Film with specified id not found',
+                content: new OA\JsonContent(
+                    properties: [new OA\Property(
+                        property: 'avatarPath',
+                        type: 'string',
+                        example: 'ef7d1976-5cd5-4c99-9bdf-cbd2209f214e/avatar/KgoFL8KpEtajLXJ225JjcMBIbMlKbXVd.jpg')],
+                    type: 'object')
+        )]
+    )]
+    public function saveOrReplaceUserAvatar(SaveOrReplaceUserAvatarRequest $request): JsonResponse
     {
         $user = Auth::user();
 
@@ -55,8 +111,6 @@ class UserController extends Controller
             return new JsonResponse(['message' => $exception->getMessage()], 500);
         }
 
-        return [
-            'avatar_path' => $filePath,
-        ];
+        return new JsonResponse(['avatarPath' => $filePath], 200);
     }
 }
