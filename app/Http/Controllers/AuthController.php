@@ -21,7 +21,7 @@ class AuthController extends Controller
 
     #[OA\Post(
         path: '/api/register',
-        description: 'Process registration',
+        description: 'Process registration. New user is assigned "user" role',
         summary: 'User registration',
         requestBody: new OA\RequestBody(required: true, content: new OA\JsonContent(ref: '#/components/schemas/RegisterUserRequest')),
         tags: ['Auth'],

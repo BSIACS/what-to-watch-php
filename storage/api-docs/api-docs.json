@@ -12,7 +12,7 @@
                     "Auth"
                 ],
                 "summary": "User registration",
-                "description": "Process registration",
+                "description": "Process registration. New user is assigned \"user\" role",
                 "operationId": "8a56853624e025573120a09a4c75d468",
                 "requestBody": {
                     "required": true,
@@ -88,6 +88,255 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Токены удалены"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/films/{id}/comments": {
+            "get": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Get a list of comments",
+                "description": "Returns comments to a film by film id.",
+                "operationId": "7446513c8946f9b75a540081e507272f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "schema": {
+                            "description": "Film id",
+                            "type": "string",
+                            "example": "010a26e3-b835-4611-bfe9-d7bba5324417"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of comments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CommentCollection"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Film with the requested id does not exist",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Фильм с таким id не существует"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Create comment",
+                "description": "Create comment.",
+                "operationId": "47ba24bcf2b9327e5732f11acb905f3a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Film id",
+                        "schema": {
+                            "type": "string",
+                            "example": "010a26e3-b835-4611-bfe9-d7bba5324416"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateCommentRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Comment created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "": {
+                                            "$ref": "#/components/schemas/CommentResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Film with specified id not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Фильм с таким id не существует"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/comments/{id}": {
+            "post": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Patch comment by id",
+                "description": "Patch comment by id. Authorization: with \"user\" role - can only patch his own comment; with \"moderator\" role - can patch any comment.",
+                "operationId": "4e54edd39231454a15fb0728534a23c8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Comment id",
+                        "schema": {
+                            "type": "string",
+                            "default": "010a26e3-b835-4611-bfe9-d7bba5324416"
+                        }
+                    },
+                    {
+                        "name": "_method",
+                        "in": "query",
+                        "example": "PATCH"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchCommentRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Comment patched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Комментарий успешно отредактирован"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Comment with requested id not exist",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Комментарий с таким id не существует"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Delete comment by id",
+                "description": "Delete comment by id. Authorization: with \"user\" role - can only delete his own comment; with \"moderator\" role - can delete any comment.",
+                "operationId": "e92d3d0b9f0c425a03c3940fe31701e5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Comment id",
+                        "schema": {
+                            "type": "string",
+                            "default": "010a26e3-b835-4611-bfe9-d7bba5324416"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comment deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Комментарий успешно удалён"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Comment with requested id not exist",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Комментарий с таким id не существует"
                                         }
                                     },
                                     "type": "object"
@@ -246,7 +495,7 @@
                     "Films"
                 ],
                 "summary": "Patch film by id",
-                "description": "Update film info according to the submitted form data. Authorization: only for moderator",
+                "description": "Update film info according to the submitted form data. Authorization: only for \"moderator\" role",
                 "operationId": "c6aa65a0616cb5de5db2c26452461272",
                 "parameters": [
                     {
@@ -373,7 +622,7 @@
                 "operationId": "a65897868f1d4105404848067624d207",
                 "responses": {
                     "200": {
-                        "description": "List of films",
+                        "description": "User data",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -478,6 +727,22 @@
     },
     "components": {
         "schemas": {
+            "CreateCommentRequest": {
+                "properties": {
+                    "text": {
+                        "description": "Comment content",
+                        "type": "string",
+                        "example": "Alice guessed who it was, even before she came upon a Gryphon, lying fast asleep in the act of crawling away: besides all this, there was no more of the cattle in the window, I only wish it was,' he said. (Which he certainly did NOT, being made.",
+                        "nullable": true
+                    },
+                    "comment_id": {
+                        "description": "Comment id. Id - if the comment refers to another comment, NULL - if the comment refers to film.",
+                        "type": "string",
+                        "example": "03df3ff9-3a46-45c7-8f7c-e8fc54d6d458"
+                    }
+                },
+                "type": "object"
+            },
             "CreateFilmRequest": {
                 "properties": {
                     "imdbId": {
@@ -501,6 +766,17 @@
                         "type": "string",
                         "example": "ud5R#gh78Qi!6",
                         "nullable": false
+                    }
+                },
+                "type": "object"
+            },
+            "PatchCommentRequest": {
+                "properties": {
+                    "text": {
+                        "description": "Comment content",
+                        "type": "string",
+                        "example": "Alice guessed who it was, even before she came upon a Gryphon, lying fast asleep in the act of crawling away: besides all this, there was no more of the cattle in the window, I only wish it was,' he said. (Which he certainly did NOT, being made.",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -658,6 +934,35 @@
                 },
                 "type": "object"
             },
+            "CommentCollection": {
+                "title": "CommentCollection",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CommentResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CommentResource": {
+                "title": "CommentResource",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "text": {},
+                    "created_at": {},
+                    "name": {},
+                    "commentId": {
+                        "description": "Возвращает null, если комментарий относится к фильму или id, если является ответом на другой комментарий",
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "FilmResource": {
                 "title": "FilmResource",
                 "properties": {
@@ -760,27 +1065,6 @@
                 },
                 "type": "object"
             },
-            "LogedUserResource": {
-                "title": "LogedUserResource",
-                "properties": {
-                    "id": {
-                        "type": "string"
-                    },
-                    "name": {
-                        "type": "string"
-                    },
-                    "email": {
-                        "type": "string"
-                    },
-                    "avatar_path": {
-                        "type": "string"
-                    },
-                    "token": {
-                        "type": "string"
-                    }
-                },
-                "type": "object"
-            },
             "PaginatedFilmShortCollection": {
                 "title": "PaginatedFilmShortCollection",
                 "properties": {
@@ -801,21 +1085,6 @@
                     "total_pages": {
                         "type": "integer",
                         "example": 4
-                    }
-                },
-                "type": "object"
-            },
-            "RegisteredUserResource": {
-                "title": "RegisteredUserResource",
-                "properties": {
-                    "name": {
-                        "type": "string"
-                    },
-                    "email": {
-                        "type": "string"
-                    },
-                    "token": {
-                        "type": "string"
                     }
                 },
                 "type": "object"
@@ -867,6 +1136,10 @@
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Comments",
+            "description": "Comments"
         },
         {
             "name": "Films",

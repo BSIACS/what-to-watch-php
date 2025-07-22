@@ -29,7 +29,7 @@ class UserController extends Controller
         ],
         responses: [new OA\Response(
             response: 200,
-            description: 'List of films',
+            description: 'User data',
             content: new OA\JsonContent(ref: '#/components/schemas/UserResource'))]
     )]
     public function getUser(): UserResource

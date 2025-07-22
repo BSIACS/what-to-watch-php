@@ -161,7 +161,7 @@ class FilmController extends Controller
 
     #[OA\Post(
         path: '/api/films/{id}',
-        description: 'Update film info according to the submitted form data. Authorization: only for moderator',
+        description: 'Update film info according to the submitted form data. Authorization: only for "moderator" role',
         summary: 'Patch film by id',
         security: [["sanctumAuth" => []]],
         requestBody: new OA\RequestBody(

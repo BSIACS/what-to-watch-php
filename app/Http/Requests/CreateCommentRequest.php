@@ -2,14 +2,18 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Film;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\Validator;
+use OpenApi\Attributes as OA;
 
+#[OA\Schema(
+    schema: 'CreateCommentRequest',
+    properties: [
+        new OA\Property(property: 'text', description: 'Comment content', type: 'string', example: 'Alice guessed who it was, even before she came upon a Gryphon, lying fast asleep in the act of crawling away: besides all this, there was no more of the cattle in the window, I only wish it was,\' he said. (Which he certainly did NOT, being made.', nullable: true),
+        new OA\Property(property: 'comment_id', description: 'Comment id. Id - if the comment refers to another comment, NULL - if the comment refers to film.', type: 'string', example: '03df3ff9-3a46-45c7-8f7c-e8fc54d6d458'),
+    ],
+    type: 'object',
+)]
 class CreateCommentRequest extends FormRequest
 {
     /**
@@ -33,8 +37,8 @@ class CreateCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'text' => ['required', 'min:50', 'max:400'],
-            'comment_id' => ['exists:comments,id'],
+            'text' => ['required', 'min:5', 'max:400'],
+            'comment_id' => ['uuid'],
         ];
     }
 
@@ -42,7 +46,7 @@ class CreateCommentRequest extends FormRequest
     {
         return [
             'required' => 'Поле обязательно для заполнения',
-            'text.min' => 'Мнимальное количество символов 50',
+            'text.min' => 'Мнимальное количество символов 5',
             'text.max' => 'Максимальное количество символов 400',
         ];
     }
