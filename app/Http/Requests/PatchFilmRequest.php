@@ -5,10 +5,52 @@ namespace App\Http\Requests;
 use App\Constants\FilmValidationConstants;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\UploadedFile;
+use OpenApi\Attributes as OA;
 
-
+#[OA\Schema(
+    schema: 'PatchFilmRequest',
+    type: 'object'
+)]
 class PatchFilmRequest extends FormRequest
 {
+    #[OA\Property(property: 'name', description: 'Film title', type: 'string', example: 'American History X', nullable: true)]
+    public string $name;
+
+    #[OA\Property(property: 'posterImage', description: 'Big poster', type: 'file', nullable: true)]
+    public UploadedFile $posterImage;
+
+    #[OA\Property(property: 'previewImage', description: 'Preview (small image)', type: 'file', nullable: true)]
+    public UploadedFile $previewImage;
+
+    #[OA\Property(property: 'backgroundImage', description: 'Background image', type: 'file', nullable: true)]
+    public UploadedFile $backgroundImage;
+
+    #[OA\Property(property: 'backgroundColor', description: 'Color in hexadecimal encoding (#FFFFFF)', type: 'string', example: '', nullable: true)]
+    public string $backgroundColor;
+
+    #[OA\Property(property: 'released', description: 'Year of release', type: 'integer', example: 1998, nullable: true)]
+    public int $released;
+
+    #[OA\Property(property: 'description', description: 'Description', type: 'string', example: '', nullable: true)]
+    public string $description;
+
+    #[OA\Property(property: 'starring[]', description: 'List of actors', type: 'array',
+        items: new OA\Items(type: 'string', example: 'Иван Иванов',),
+        collectionFormat: "multi", example: ['Edward Norton', 'Edward Furlong'], nullable: true)]
+    public array $starring = [];
+
+    #[OA\Property(property: 'runtime', description: 'Movie duration', type: 'integer', example: '', nullable: true)]
+    public int $runtime;
+
+    #[OA\Property(property: 'video', description: 'Video file', type: 'file', nullable: true)]
+    public UploadedFile $video;
+
+    #[OA\Property(property: 'previewVideo', description: 'Preview video file', type: 'file', nullable: true)]
+    public UploadedFile $previewVideo;
+
+    #[OA\Property(property: 'status', description: 'Status: ready, pending, on_moderation', type: 'string', enum: ['ready','pending','on_moderation'], example: '', nullable: true)]
+    public string $status;
     /**
      * Determine if the user is authorized to make this request.
      */

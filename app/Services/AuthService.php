@@ -14,7 +14,7 @@ class AuthService
     {
     }
 
-    public function processRegister(string $name, string $email, string $password): array
+    public function processRegister(string $name, string $email, string $password): string
     {
         $role = Role::query()->where('name', 'user')->first();
 
@@ -32,13 +32,10 @@ class AuthService
 
         DB::commit();
 
-        return [
-            'user' => $user,
-            'token' => $token,
-        ];
+        return $token;
     }
 
-    public function processLogin(string $email): array
+    public function processLogin(string $email): string
     {
         $user = User::query()->where('email', $email)->first();
 
@@ -46,10 +43,7 @@ class AuthService
 
         $this->removeRedundantTokens($email);
 
-        return [
-            'user' => $user,
-            'token' => $token,
-        ];
+        return $token;
     }
 
     public function processLogout(User $user): void

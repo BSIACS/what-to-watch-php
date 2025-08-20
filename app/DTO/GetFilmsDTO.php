@@ -7,7 +7,7 @@ class GetFilmsDTO
     private int $page = 1;
     private ?string $genre = null;
     private string $status = 'ready';
-    private ?string $orderBy = null;
+    private ?string $orderBy = 'released';
     private string $orderTo = 'asc';
 
     public function __construct(

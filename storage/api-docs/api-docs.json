@@ -1,0 +1,1588 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "What to watch API",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api": {},
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Регистрация нового пользователя",
+                "description": "Выполняет регистрацию. Пользователю присваивается роль \"user\".",
+                "operationId": "8a56853624e025573120a09a4c75d468",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegisterUserRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Токен доступа",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/TokenResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Аутентификация пользователя",
+                "description": "Выполняет аутентификацию пользователя.",
+                "operationId": "a3b306d14572d1f4bd6c064b3233e7b8",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginUserRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Токен доступа",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/TokenResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Выход из системы",
+                "description": "Удаляет токены доступа",
+                "operationId": "fe8f3429cd6979b3b4517e186505f9f9",
+                "responses": {
+                    "200": {
+                        "description": "Successful logout",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Токены удалены"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/films/{id}/comments": {
+            "get": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Получение списка отзывов к фильму",
+                "description": "Предоставляет список отзывов к фильму по идентификатору фильма.",
+                "operationId": "7446513c8946f9b75a540081e507272f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "schema": {
+                            "description": "Film id",
+                            "type": "string",
+                            "example": "010a26e3-b835-4611-bfe9-d7bba5324417"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список комментариев",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CommentCollection"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Фильм с предоствленным id не существует",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Фильм с предоствленным id не существует"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Добавление отзыва к фильму",
+                "description": "Добавление отзыва к фильму по идентификатору фильма. В качестве параметра в адресе указывается id фильма к которому добавляется комментарий.\n                      Комментарий может быть добавлен отдельно, так и в ответ на другой, в этом случае в теле запроса указывается comment_id.",
+                "operationId": "47ba24bcf2b9327e5732f11acb905f3a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Film id",
+                        "schema": {
+                            "type": "string",
+                            "example": "010a26e3-b835-4611-bfe9-d7bba5324416"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateCommentRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Комментарий успешно создан",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/CommentResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Фильм с предоствленным id не существует",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Фильм с предоствленным id не существует"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/comments/{id}": {
+            "post": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Редактирование комментария",
+                "description": "Редактирование комментария по идентификатору фильма. Авторизация: обладатель роли \"user\" - может отредактировать только свой комментарий; обладатель роли \"moderator\" - может отредактировать любой комментарий.",
+                "operationId": "4e54edd39231454a15fb0728534a23c8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Comment id",
+                        "schema": {
+                            "type": "string",
+                            "default": "010a26e3-b835-4611-bfe9-d7bba5324416"
+                        }
+                    },
+                    {
+                        "name": "_method",
+                        "in": "query",
+                        "example": "PATCH"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchCommentRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Комментарий успешно отредактирован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Комментарий успешно отредактирован"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Комментарий с предоствленным id не существует",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Комментарий с предоствленным id не существует"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Удаление комментария",
+                "description": "Выполняет удаление комментария по его идентификатору. Авторизация: обладатель роли \"user\" - может удалить только свой комментарий; обладатель роли \"moderator\" - может удалить любой комментарий.",
+                "operationId": "e92d3d0b9f0c425a03c3940fe31701e5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Comment id",
+                        "schema": {
+                            "type": "string",
+                            "default": "010a26e3-b835-4611-bfe9-d7bba5324416"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Комментарий успешно удалён",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Комментарий успешно удалён"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Комментарий с предоствленным id не существует",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Комментарий с предоствленным id не существует"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/favorite": {
+            "get": {
+                "tags": [
+                    "Favorites"
+                ],
+                "summary": "Получение списка избранных фильмов",
+                "description": "Предоставляет список фильмов добавленных пользователем в избранное.",
+                "operationId": "a87ef6f925f3c000e338e472e741c6f9",
+                "responses": {
+                    "200": {
+                        "description": "Список фильмов добавленных в избранное",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FilmShortCollection"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Фильм с предоствленным id не существует",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Фильм с предоствленным id не существует"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/films/{id}/favorite": {
+            "post": {
+                "tags": [
+                    "Favorites"
+                ],
+                "summary": "Добавление фильма в избранное",
+                "description": "Добавление фильма в избранное.",
+                "operationId": "ff78b4f25dcde9e29b1610396057e6d2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Идентификатор фильма",
+                        "example": "010a26e3-b835-4611-bfe9-d7bba5324417"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Фильм добавлен в избранное",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Фильм добавлен в избранное"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Фильм с предоствленным id не существует",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Фильм с предоствленным id не существует"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Favorites"
+                ],
+                "summary": "Удаление фильма из списка избранных",
+                "description": "Удаление фильма из списка избранных.",
+                "operationId": "d0238cdff289157938d6a2dfab9197c9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Идентификатор фильма",
+                        "example": "010a26e3-b835-4611-bfe9-d7bba5324417"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Фильм удален из списка избранных",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Фильм удален из списка избранных"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Фильм с предоствленным id не существует",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Фильм с предоствленным id не существует"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/films": {
+            "get": {
+                "tags": [
+                    "Films"
+                ],
+                "summary": "Получение списка фильмов",
+                "description": "Возвращает первые 8 фильмов, если не передано другое условие (параметр page).\n                    Сортировка по дате выхода и рейтингу фильма.\n                    По умолчанию фильмы сортируются по дате выхода, от новых к старым (desc).\n                    Фильтрация по жанрам и статусу.",
+                "operationId": "6e6d7d0ac1875172a482d9169a409385",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "genre",
+                        "in": "query",
+                        "description": "Название жанра: Drama, Action, Comedy, и т. д.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "schema": {
+                            "enum": [
+                                "ready",
+                                "pending",
+                                "on_moderation"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "order_by",
+                        "in": "query",
+                        "schema": {
+                            "enum": [
+                                "released",
+                                "rating"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "order_to",
+                        "in": "query",
+                        "schema": {
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of films",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedFilmShortCollection"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Films"
+                ],
+                "summary": "Создание фильма в базе по его imdbId",
+                "description": "Создаёт фильм в базе по его imdbId. Для получения начальных данных используется внешний API (omdbapi.com). Авторизация: только для пользователей с ролью \"moderator\"",
+                "operationId": "aff27df02f5281bf651b9e1c88845ee2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateFilmRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Задача на добавление фильма в базу данных успешно создана",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/films/{id}": {
+            "get": {
+                "tags": [
+                    "Films"
+                ],
+                "summary": "Получение информации о фильме",
+                "description": "Предоставляет информацию о фильме по его идентификатору.",
+                "operationId": "462e80a3204b42e5c25fec1a482d70df",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "schema": {
+                            "type": "string",
+                            "default": "010a26e3-b835-4611-bfe9-d7bba5324416"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Подробная информация о фильме",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FilmResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Фильм с предоствленным id не существует",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Фильм с предоствленным id не существует"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Films"
+                ],
+                "summary": "Редактирование фильма ",
+                "description": "Редактирование данных о фильме. Авторизация: только для пользователей с ролью \"moderator\"",
+                "operationId": "c6aa65a0616cb5de5db2c26452461272",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Film id",
+                        "example": "9f3d5512-deac-43d6-bd9f-42d7eaf6b4cf"
+                    },
+                    {
+                        "name": "_method",
+                        "in": "query",
+                        "example": "PATCH"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchFilmRequest"
+                            },
+                            "encoding": {
+                                "starring[]": {
+                                    "mediaType": "multipart/form-data",
+                                    "style": "form",
+                                    "explode": true
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Данные фильма успешно отредактированы",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Данные фильма успешно отредактированы"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Фильм с предоствленным id не существует",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Фильм с предоствленным id не существует"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/films/{id}/similar": {
+            "get": {
+                "tags": [
+                    "Films"
+                ],
+                "summary": "Получение списка похожих фильмов",
+                "description": "Предоставляет список из 4 похожих фильмов.\n                    Похожесть определяется принадлежностью к тем же жанрам, что и исходный фильм (любым из имеющихся).",
+                "operationId": "9fb33626b2eff9e264d40ebd22f17b4b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of films",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FilmShortCollection"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Фильм с предоствленным id не существует",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Фильм с предоствленным id не существует"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/genre": {
+            "get": {
+                "tags": [
+                    "Genres"
+                ],
+                "summary": "Получить список жанров",
+                "description": "Маршрут предоставляет список доступных жанров.",
+                "operationId": "7a5bbefd1ca8c995aa85b06db3342625",
+                "responses": {
+                    "200": {
+                        "description": "Список жанров",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GenreCollection"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/genre/{id}": {
+            "post": {
+                "tags": [
+                    "Genres"
+                ],
+                "summary": "Обновить данные о жанре",
+                "description": "Маршрут обновляет данные о жанре. Авторизация: доступен только пользователям с ролью \"moderator\"",
+                "operationId": "6fb17fc8902fe5eac1e4e8b28628102e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Идентификатор жанра",
+                        "example": "010a26e3-b835-4611-bfe9-d7bba5324417"
+                    },
+                    {
+                        "name": "_method",
+                        "in": "query",
+                        "example": "PATCH"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateGenreRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Данные жанра успешно отредактированы",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Данные жанра успешно отредактированы"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Жанр с таким id не существует",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Жанр с предоствленным id не существует"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/promo": {
+            "get": {
+                "tags": [
+                    "Promo"
+                ],
+                "summary": "Получить данные промо-фильма",
+                "description": "Маршрут предоставляет данные о промо-фильме.",
+                "operationId": "9b377a55d85cf27d8fe20a8e882f8cd9",
+                "responses": {
+                    "200": {
+                        "description": "Данные о промо-фильме",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FilmResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Промо-фильм не был предварительно установлен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Промо-фильм не установлен"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/promo/{id}": {
+            "post": {
+                "tags": [
+                    "Promo"
+                ],
+                "summary": "Установить промо-фильм",
+                "description": "Установить промо-фильм. Авторизация: доступен только пользователям с ролью \"moderator\"",
+                "operationId": "0b4fd33c104b5fc44b8363ec4d3491c7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Идентификатор фильма",
+                        "example": "010a26e3-b835-4611-bfe9-d7bba5324417"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of comments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Промо-фильм установлен успешно"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Фильм с предоствленным id не существует",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Фильм с предоствленным id не существует"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/user": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Получение профиля пользователя",
+                "description": "Предоставляет данные о профиля пользователя",
+                "operationId": "a65897868f1d4105404848067624d207",
+                "responses": {
+                    "200": {
+                        "description": "Данные профиля пользователя",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/UserResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Обновление профиля пользователя",
+                "description": "Обновляет данные профиля пользователя",
+                "operationId": "07961faf38790d89b63ebf00b8cabb58",
+                "parameters": [
+                    {
+                        "name": "_method",
+                        "in": "query",
+                        "example": "PATCH"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchUserRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Данные профиля пользователя",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/UserResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/user/avatar": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Сохранение аватара пользователя",
+                "description": "Сохраненяет аватар пользователя",
+                "operationId": "a4c7ce6e96fe7d0c733a2cdb99b8df4e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SaveOrReplaceUserAvatarRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Путь к аватару пользователя",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/AvatarPathResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "CreateCommentRequest": {
+                "properties": {
+                    "text": {
+                        "description": "Текстовое содержимое комментария",
+                        "type": "string",
+                        "example": "Alice guessed who it was, even before she came upon a Gryphon, lying fast asleep in the act of crawling away: besides all this, there was no more of the cattle in the window, I only wish it was,' he said. (Which he certainly did NOT, being made.",
+                        "nullable": true
+                    },
+                    "comment_id": {
+                        "description": "Идентификатор комментария. Указывается, если комментарий ответ на другой комментарий.",
+                        "type": "string",
+                        "example": "03df3ff9-3a46-45c7-8f7c-e8fc54d6d458"
+                    }
+                },
+                "type": "object"
+            },
+            "CreateFilmRequest": {
+                "properties": {
+                    "imdbId": {
+                        "description": "IMDb ID",
+                        "type": "string",
+                        "example": "tt0120102"
+                    }
+                },
+                "type": "object"
+            },
+            "LoginUserRequest": {
+                "properties": {
+                    "email": {
+                        "description": "User email",
+                        "type": "string",
+                        "example": "ivan@somemail.ru",
+                        "nullable": false
+                    },
+                    "password": {
+                        "description": "Password",
+                        "type": "string",
+                        "example": "ud5R#gh78Qi!6",
+                        "nullable": false
+                    }
+                },
+                "type": "object"
+            },
+            "PatchCommentRequest": {
+                "properties": {
+                    "text": {
+                        "description": "Текстовое содержимое комментария",
+                        "type": "string",
+                        "example": "Alice guessed who it was, even before she came upon a Gryphon, lying fast asleep in the act of crawling away: besides all this, there was no more of the cattle in the window, I only wish it was,' he said. (Which he certainly did NOT, being made.",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "PatchFilmRequest": {
+                "properties": {
+                    "name": {
+                        "description": "Film title",
+                        "type": "string",
+                        "example": "American History X",
+                        "nullable": true
+                    },
+                    "posterImage": {
+                        "description": "Big poster",
+                        "type": "file",
+                        "nullable": true
+                    },
+                    "previewImage": {
+                        "description": "Preview (small image)",
+                        "type": "file",
+                        "nullable": true
+                    },
+                    "backgroundImage": {
+                        "description": "Background image",
+                        "type": "file",
+                        "nullable": true
+                    },
+                    "backgroundColor": {
+                        "description": "Color in hexadecimal encoding (#FFFFFF)",
+                        "type": "string",
+                        "example": "",
+                        "nullable": true
+                    },
+                    "released": {
+                        "description": "Year of release",
+                        "type": "integer",
+                        "example": 1998,
+                        "nullable": true
+                    },
+                    "description": {
+                        "description": "Description",
+                        "type": "string",
+                        "example": "",
+                        "nullable": true
+                    },
+                    "starring[]": {
+                        "description": "List of actors",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "example": "Иван Иванов"
+                        },
+                        "collectionFormat": "multi",
+                        "example": [
+                            "Edward Norton",
+                            "Edward Furlong"
+                        ],
+                        "nullable": true
+                    },
+                    "runtime": {
+                        "description": "Movie duration",
+                        "type": "integer",
+                        "example": "",
+                        "nullable": true
+                    },
+                    "video": {
+                        "description": "Video file",
+                        "type": "file",
+                        "nullable": true
+                    },
+                    "previewVideo": {
+                        "description": "Preview video file",
+                        "type": "file",
+                        "nullable": true
+                    },
+                    "status": {
+                        "description": "Status: ready, pending, on_moderation",
+                        "type": "string",
+                        "enum": [
+                            "ready",
+                            "pending",
+                            "on_moderation"
+                        ],
+                        "example": "",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "PatchUserRequest": {
+                "properties": {
+                    "name": {
+                        "description": "User name",
+                        "type": "string",
+                        "example": "Ivan",
+                        "nullable": false
+                    },
+                    "email": {
+                        "description": "User email",
+                        "type": "string",
+                        "example": "ivan@somemail.ru",
+                        "nullable": false
+                    },
+                    "password": {
+                        "description": "Password",
+                        "type": "string",
+                        "example": "ud5R#gh78Qi!6",
+                        "nullable": false
+                    },
+                    "password_confirmation": {
+                        "description": "Password confirmation",
+                        "type": "string",
+                        "example": "ud5R#gh78Qi!6",
+                        "nullable": false
+                    }
+                },
+                "type": "object"
+            },
+            "RegisterUserRequest": {
+                "properties": {
+                    "name": {
+                        "description": "User name",
+                        "type": "string",
+                        "example": "Ivan",
+                        "nullable": false
+                    },
+                    "email": {
+                        "description": "User email",
+                        "type": "string",
+                        "example": "ivan@somemail.ru",
+                        "nullable": false
+                    },
+                    "password": {
+                        "description": "Password",
+                        "type": "string",
+                        "example": "ud5R#gh78Qi!6",
+                        "nullable": false
+                    },
+                    "password_confirmation": {
+                        "description": "Password confirmation",
+                        "type": "string",
+                        "example": "ud5R#gh78Qi!6",
+                        "nullable": false
+                    }
+                },
+                "type": "object"
+            },
+            "SaveOrReplaceUserAvatarRequest": {
+                "properties": {
+                    "file": {
+                        "description": "User avatar (png, jpg, jpeg, svg)",
+                        "type": "file",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateGenreRequest": {
+                "properties": {
+                    "name": {
+                        "description": "Название жанра",
+                        "type": "string",
+                        "example": "Action",
+                        "nullable": false
+                    }
+                },
+                "type": "object"
+            },
+            "AvatarPathResource": {
+                "title": "AvatarPathResource",
+                "properties": {
+                    "avatarPath": {
+                        "type": "string",
+                        "example": "ef7d1976-5cd5-4c99-9bdf-cbd2209f214e/avatar/KgoFL8KpEtajLXJ225JjcMBIbMlKbXVd.jpg"
+                    }
+                },
+                "type": "object"
+            },
+            "CommentCollection": {
+                "title": "CommentCollection",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CommentResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CommentResource": {
+                "title": "CommentResource",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "text": {},
+                    "created_at": {},
+                    "name": {},
+                    "commentId": {
+                        "description": "Возвращает null, если комментарий относится к фильму или id, если является ответом на другой комментарий",
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "FilmResource": {
+                "title": "FilmResource",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "010a26e3-b835-4611-bfe9-d7bba5324416"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "American History X"
+                    },
+                    "poster_image": {
+                        "type": "string",
+                        "example": "poster/wvOl9GlXqt0e3MuXDpNARfATfVUkSp8e.jpg"
+                    },
+                    "preview_image": {
+                        "type": "string",
+                        "example": "preview/ZfDXNJiAqsKfHpIOsmNrByopDahtOsVn.jpg"
+                    },
+                    "background_image": {
+                        "type": "string",
+                        "example": "background/dJK1sOIlbTCOMjPaY48uXW7h6V71Bun3.jpg"
+                    },
+                    "background_color": {
+                        "type": "string"
+                    },
+                    "genres": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": [
+                            "Drama",
+                            "Action"
+                        ]
+                    },
+                    "released": {
+                        "type": "integer",
+                        "example": 1998
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Living a life marked by violence, neo-Nazi Derek finally goes to prison after killing two black youths. Upon his release, Derek vows to change; he hopes to prevent his brother, Danny, who idolizes Derek, from following in his foot..."
+                    },
+                    "director": {
+                        "type": "string",
+                        "example": "Tony Kaye"
+                    },
+                    "starring": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": [
+                            "Edward Norton",
+                            "Edward Furlong",
+                            "Beverly D'Angelo"
+                        ]
+                    },
+                    "run_time": {
+                        "type": "integer",
+                        "example": 119
+                    },
+                    "video_link": {
+                        "type": "string",
+                        "example": "video/ha02ATj7xcrlkKTePBiHG8FzHYqgkVIQ.mp4"
+                    },
+                    "preview_video_link": {
+                        "type": "string",
+                        "example": "previewVideo/IdpzDUwjwYMsSmYb0b7CGo59pgwiLN02.mp4"
+                    },
+                    "rating": {
+                        "type": "integer",
+                        "example": 4.9
+                    }
+                },
+                "type": "object"
+            },
+            "FilmShortCollection": {
+                "title": "FilmShortCollection",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/FilmShortResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "FilmShortResource": {
+                "title": "FilmShortResource",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {},
+                    "preview_image": {},
+                    "preview_video_link": {}
+                },
+                "type": "object"
+            },
+            "GenreCollection": {
+                "title": "GenreCollection",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/GenresResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "GenresResource": {
+                "title": "GenresResource",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "010a26e3-b835-4611-bfe9-d7bba5324416"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Action"
+                    }
+                },
+                "type": "object"
+            },
+            "PaginatedFilmShortCollection": {
+                "title": "PaginatedFilmShortCollection",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/FilmShortResource"
+                        }
+                    },
+                    "current_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 8
+                    },
+                    "total_pages": {
+                        "type": "integer",
+                        "example": 4
+                    }
+                },
+                "type": "object"
+            },
+            "TokenResource": {
+                "title": "TokenResource",
+                "properties": {
+                    "token": {
+                        "type": "string",
+                        "example": "0faa527e-deb5-4e92-84f5-b08355d88350|c5O42jaXgOtaSin7KvU9EhF73jXlcFuwFpwOfZE2b4c34717"
+                    }
+                },
+                "type": "object"
+            },
+            "UserResource": {
+                "title": "UserResource",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Ivan"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "ivan@somemail.com"
+                    },
+                    "role": {
+                        "type": "string",
+                        "example": "User"
+                    },
+                    "avatarPath": {
+                        "type": "string",
+                        "example": "ef7d1976-5cd5-4c99-9bdf-cbd2209f214e/avatar/KgoFL8KpEtajLXJ225JjcMBIbMlKbXVd.jpg"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "sanctumAuth": {
+                "type": "http",
+                "description": "Bearer token for authentication",
+                "name": "Authorization",
+                "in": "header",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
+            "name": "Comments",
+            "description": "Comments"
+        },
+        {
+            "name": "Favorites",
+            "description": "Favorites"
+        },
+        {
+            "name": "Films",
+            "description": "Films"
+        },
+        {
+            "name": "Genres",
+            "description": "Genres"
+        },
+        {
+            "name": "Promo",
+            "description": "Promo"
+        },
+        {
+            "name": "User",
+            "description": "User"
+        }
+    ]
+}

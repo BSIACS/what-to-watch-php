@@ -110,52 +110,52 @@ class PatchFilmDTO
         $this->status = $statusId;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function getBackgroundColor(): string
+    public function getBackgroundColor(): ?string
     {
         return $this->backgroundColor;
     }
 
-    public function getReleased(): int
+    public function getReleased(): ?int
     {
         return $this->released;
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    public function getDirector(): string
+    public function getDirector(): ?string
     {
         return $this->director;
     }
 
-    public function getStarring(): array
+    public function getStarring(): ?array
     {
         return $this->starring;
     }
 
-    public function getRuntime(): int
+    public function getRuntime(): ?int
     {
         return $this->runtime;
     }
 
-    public function getImdbId(): string
+    public function getImdbId(): ?string
     {
         return $this->imdbId;
     }
 
-    public function getGenres(): string
+    public function getGenres(): ?string
     {
         return $this->genres;
     }
 
-    public function getStatus(): string
+    public function getStatus(): ?string
     {
         return $this->status;
     }

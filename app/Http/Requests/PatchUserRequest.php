@@ -3,11 +3,26 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Validator;
+use OpenApi\Attributes as OA;
 
+#[OA\Schema(
+    schema: 'PatchUserRequest',
+    type: 'object'
+)]
 class PatchUserRequest extends FormRequest
 {
+    #[OA\Property(property: 'name', description: 'User name', type: 'string', example: 'Ivan', nullable: false)]
+    public string $name;
+
+    #[OA\Property(property: 'email', description: 'User email', type: 'string', example: 'ivan@somemail.ru', nullable: false)]
+    public string $email;
+
+    #[OA\Property(property: 'password', description: 'Password', type: 'string', example: 'ud5R#gh78Qi!6', nullable: false)]
+    public string $password;
+
+    #[OA\Property(property: 'password_confirmation', description: 'Password confirmation', type: 'string', example: 'ud5R#gh78Qi!6', nullable: false)]
+    public string $password_confirmation;
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -30,7 +45,6 @@ class PatchUserRequest extends FormRequest
             'email' => ['email', 'string', 'max:255'],
             'password' => ['min:6'],
             'password_confirmation' => [],
-            'file' => ['nullable', 'image', 'mimes:png,jpg,jpeg,svg', "max:$maxFileSizeInMB"],
         ];
     }
 
@@ -40,9 +54,6 @@ class PatchUserRequest extends FormRequest
             'name.regex' => 'Допустимы только символы А-Я а-я A-Z a-z . _',
             'email' => 'Поле должно содержать валидный email адрес',
             'email.unique' => 'Пользователь с таким email уже зарегистрирован',
-            'file.mimes' => 'Допустимы только png, jpeg и svg расширения',
-            'file.image' => 'Файл должен быть изображением',
-            'file.max' => 'Максимальный размер загружаемого файла 10MB',
         ];
     }
 

@@ -20,7 +20,7 @@ Route::middleware(['throttle:api'])->group(function () {
     Route::post('login', [\App\Http\Controllers\AuthController::class, 'login']);
 });
 
-Route::middleware(['throttle:api', 'auth:sanctum'])->get('logout', [\App\Http\Controllers\AuthController::class, 'logout']);
+Route::middleware(['throttle:api', 'auth:sanctum'])->post('logout', [\App\Http\Controllers\AuthController::class, 'logout']);
 
 
 //USER CONTROLLER
@@ -32,8 +32,11 @@ Route::middleware(['throttle:api', 'auth:sanctum', 'role:admin,moderator,user'])
 
 
 //GENRE CONTROLLER
-Route::middleware(['throttle:api', 'auth:sanctum', 'role:admin,moderator'])->group(function () {
+Route::middleware(['throttle:api'])->group(function () {
     Route::get('genre', [\App\Http\Controllers\GenreController::class, 'getAll']);
+});
+
+Route::middleware(['throttle:api', 'auth:sanctum', 'role:admin,moderator'])->group(function () {
     Route::patch('genre/{id}', [\App\Http\Controllers\GenreController::class, 'update']);
 });
 
@@ -45,9 +48,19 @@ Route::middleware(['throttle:api'])->group(function () {
     Route::get('films/{id}/similar', [\App\Http\Controllers\FilmController::class, 'getSimilarFilms']);
 });
 
-Route::middleware(['throttle:api', 'auth:sanctum', 'role:admin,moderator'])->group(function () {
+Route::middleware(['throttle:api'])->group(function () {
     Route::post('films', [\App\Http\Controllers\FilmController::class, 'createFilm']);
     Route::patch('films/{id}', [\App\Http\Controllers\FilmController::class, 'patchFilm']);
+});
+
+//TEST CONTROLLER
+Route::middleware(['throttle:api'])->group(function () {
+    Route::get('publicEndpoint', [\App\Http\Controllers\FilmController::class, 'publicEndpoint']);
+});
+
+Route::middleware(['throttle:api', 'auth:sanctum', 'role:admin,moderator'])->group(function () {
+    Route::get('privateEndpoint', [\App\Http\Controllers\FilmController::class, 'privateEndpoint']);
+    Route::get('privateEndpointWithAttributes', [\App\Http\Controllers\FilmController::class, 'privateEndpointWithAttributes']);
 });
 
 
@@ -74,7 +87,7 @@ Route::middleware(['throttle:api', 'auth:sanctum', 'role:admin,moderator'])->gro
 
 
 //FAVORITES CONTROLLER
-Route::middleware(['throttle:api', 'auth:sanctum', 'role:user'])->group(function () {
+Route::middleware(['throttle:api', 'auth:sanctum', 'role:admin,user'])->group(function () {
     Route::get('favorite', [\App\Http\Controllers\FavoritesController::class, 'getFavorites']);
     Route::post('films/{id}/favorite', [\App\Http\Controllers\FavoritesController::class, 'addToFavorites']);
     Route::delete('films/{id}/favorite', [\App\Http\Controllers\FavoritesController::class, 'removeFromFavorites']);

@@ -4,15 +4,20 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use OpenApi\Attributes as OA;
 
-class LoginResource extends JsonResource
+#[OA\Schema(
+    title: "GenresResource",
+    properties: [
+        new OA\Property(property: 'id', type: 'string', example: '010a26e3-b835-4611-bfe9-d7bba5324416'),
+        new OA\Property(property: 'name', type: 'string', example: 'Action'),
+    ]
+)]
+class GenresResource extends JsonResource
 {
-    protected string $userToken;
-
-    function __construct($resource, $userToken)
+    function __construct($resource)
     {
         parent::__construct($resource);
-        $this->userToken = $userToken;
     }
     /**
      * Transform the resource into an array.
@@ -24,9 +29,6 @@ class LoginResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'email' => $this->email,
-            'token' => $this->userToken,
         ];
     }
-
 }

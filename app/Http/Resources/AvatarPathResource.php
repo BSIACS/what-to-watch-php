@@ -4,8 +4,15 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use OpenApi\Attributes as OA;
 
-class GetUserResource extends JsonResource
+#[OA\Schema(
+    title: "AvatarPathResource",
+    properties: [
+        new OA\Property(property: 'avatarPath', type: 'string', example: 'ef7d1976-5cd5-4c99-9bdf-cbd2209f214e/avatar/KgoFL8KpEtajLXJ225JjcMBIbMlKbXVd.jpg')
+    ]
+)]
+class AvatarPathResource extends JsonResource
 {
     function __construct($resource)
     {
@@ -18,11 +25,10 @@ class GetUserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
         return [
-            'name' => $this->name,
-            'email' => $this->email,
-            'role' => $this->role->name,
-            'file' => $this->avatar_path,
+            'avatarPath' => $this->resource,
         ];
     }
+
 }

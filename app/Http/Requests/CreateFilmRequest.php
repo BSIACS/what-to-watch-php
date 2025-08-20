@@ -4,8 +4,15 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use OpenApi\Attributes as OA;
 
-
+#[OA\Schema(
+    schema: 'CreateFilmRequest',
+    properties: [
+        new OA\Property(property: 'imdbId', description: 'IMDb ID', type: 'string', example: 'tt0120102'),
+    ],
+    type: 'object',
+)]
 class CreateFilmRequest extends FormRequest
 {
     /**

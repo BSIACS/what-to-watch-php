@@ -3,6 +3,7 @@
 namespace App\Services;
 
 
+use App\Http\Resources\FilmShortCollection;
 use App\Http\Resources\GetFavoritesResource;
 use App\Models\Film;
 use App\Models\User;
@@ -24,13 +25,16 @@ class FavoriteService
                 'films.released',
                 DB::raw('rating / IF(score_count = 0, 1, score_count) AS rating')
             )
+            ->where('users.id', $id)
             ->join('film_user', 'users.id', '=', 'film_user.user_id')
             ->join('films', 'film_user.film_id', '=', 'films.id')
             ->join('film_statuses', 'films.status_id',  '=', 'film_statuses.id')
             ->get();
 
 
-        return GetFavoritesResource::collection($films);
+//        return GetFavoritesResource::collection($films);
+        return new FilmShortCollection($films);
+
     }
 
     public function addToFavorites(string $filmId, string $userId): void
@@ -46,7 +50,10 @@ class FavoriteService
                 'film_user.user_id',
             )
             ->join('film_user', 'users.id', '=', 'film_user.user_id')
-            ->where('film_user.film_id', $filmId)
+            ->where([
+                ['film_user.film_id', '=', $filmId],
+                ['film_user.user_id', '=', $userId]
+            ])
             ->first();
 
         if($filmUser !== null) {
