@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Constants\SwaggerConstants;
 use App\DTO\CreateCommentDTO;
 use App\DTO\PatchCommentDTO;
 use App\Http\Requests\CreateCommentRequest;
 use App\Http\Requests\PatchCommentRequest;
 use App\Http\Resources\CommentCollection;
 use App\Http\Resources\CommentResource;
-use App\Http\Resources\CreateCommentResource;
 use App\Services\CommentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -24,8 +22,8 @@ class CommentController extends Controller
 
     #[OA\Get(
         path: '/api/films/{id}/comments',
-        description: 'Returns comments to a film by film id.',
-        summary: 'Get a list of comments',
+        description: 'Предоставляет список отзывов к фильму по идентификатору фильма.',
+        summary: 'Получение списка отзывов к фильму',
         tags: ['Comments'],
         parameters: [
             new OA\Parameter(name: 'id', in: 'path', schema: new OA\Schema(description: 'Film id', type: 'string', example: '010a26e3-b835-4611-bfe9-d7bba5324417')),
@@ -33,16 +31,16 @@ class CommentController extends Controller
         responses: [
             new OA\Response(
                 response: 200,
-                description: 'List of comments',
+                description: 'Список комментариев',
                 content: new OA\JsonContent(ref: '#/components/schemas/CommentCollection')),
             new OA\Response(
                 response: 404,
-                description: 'Film with the requested id does not exist',
+                description: 'Фильм с предоствленным id не существует',
                 content: new OA\JsonContent(
                     properties: [new OA\Property(
                     property: 'message',
                     type: 'string',
-                    example: 'Фильм с таким id не существует')],
+                    example: 'Фильм с предоствленным id не существует')],
                     type: 'object'))
         ]
     )]
@@ -63,8 +61,9 @@ class CommentController extends Controller
 
     #[OA\Post(
         path: '/api/films/{id}/comments',
-        description: 'Create comment.',
-        summary: 'Create comment',
+        description: 'Добавление отзыва к фильму по идентификатору фильма. В качестве параметра в адресе указывается id фильма к которому добавляется комментарий.
+                      Комментарий может быть добавлен отдельно, так и в ответ на другой, в этом случае в теле запроса указывается comment_id.',
+        summary: 'Добавление отзыва к фильму',
         security: [["sanctumAuth" => []]],
         requestBody: new OA\RequestBody(
             required: true,
@@ -79,18 +78,18 @@ class CommentController extends Controller
         responses: [
             new OA\Response(
                 response: 200,
-                description: 'Comment created successfully',
+                description: 'Комментарий успешно создан',
                 content: new OA\JsonContent(
-                    properties: [new OA\Property(ref: '#/components/schemas/CommentResource')],
+                    properties: [new OA\Property(property: 'data', ref: '#/components/schemas/CommentResource')],
                     type: 'object')),
             new OA\Response(
                 response: 404,
-                description: 'Film with specified id not found',
+                description: 'Фильм с предоствленным id не существует',
                 content: new OA\JsonContent(
                     properties: [new OA\Property(
                         property: 'message',
                         type: 'string',
-                        example: 'Фильм с таким id не существует')],
+                        example: 'Фильм с предоствленным id не существует')],
                     type: 'object')),
         ]
     )]
@@ -117,8 +116,8 @@ class CommentController extends Controller
 
     #[OA\Post(
         path: '/api/comments/{id}',
-        description: 'Patch comment by id. Authorization: with "user" role - can only patch his own comment; with "moderator" role - can patch any comment.',
-        summary: 'Patch comment by id',
+        description: 'Редактирование комментария по идентификатору фильма. Авторизация: обладатель роли "user" - может отредактировать только свой комментарий; обладатель роли "moderator" - может отредактировать любой комментарий.',
+        summary: 'Редактирование комментария',
         security: [["sanctumAuth" => []]],
         requestBody: new OA\RequestBody(
             required: true,
@@ -134,7 +133,7 @@ class CommentController extends Controller
         responses: [
             new OA\Response(
                 response: 200,
-                description: 'Comment patched successfully',
+                description: 'Комментарий успешно отредактирован',
                 content: new OA\JsonContent(
                     properties: [new OA\Property(
                         property: 'message',
@@ -143,12 +142,12 @@ class CommentController extends Controller
                     type: 'object')),
             new OA\Response(
                 response: 404,
-                description: 'Comment with requested id not exist',
+                description: 'Комментарий с предоствленным id не существует',
                 content: new OA\JsonContent(
                     properties: [new OA\Property(
                         property: 'message',
                         type: 'string',
-                        example: 'Комментарий с таким id не существует')],
+                        example: 'Комментарий с предоствленным id не существует')],
                     type: 'object'))
         ]
     )]
@@ -179,8 +178,8 @@ class CommentController extends Controller
 
     #[OA\Delete(
         path: '/api/comments/{id}',
-        description: 'Delete comment by id. Authorization: with "user" role - can only delete his own comment; with "moderator" role - can delete any comment.',
-        summary: 'Delete comment by id',
+        description: 'Выполняет удаление комментария по его идентификатору. Авторизация: обладатель роли "user" - может удалить только свой комментарий; обладатель роли "moderator" - может удалить любой комментарий.',
+        summary: 'Удаление комментария',
         security: [["sanctumAuth" => []]],
         tags: ['Comments'],
         parameters: [
@@ -189,7 +188,7 @@ class CommentController extends Controller
         responses: [
             new OA\Response(
                 response: 200,
-                description: 'Comment deleted successfully',
+                description: 'Комментарий успешно удалён',
                 content: new OA\JsonContent(
                     properties: [new OA\Property(
                         property: 'message',
@@ -198,12 +197,12 @@ class CommentController extends Controller
                     type: 'object')),
             new OA\Response(
                 response: 404,
-                description: 'Comment with requested id not exist',
+                description: 'Комментарий с предоствленным id не существует',
                 content: new OA\JsonContent(
                     properties: [new OA\Property(
                         property: 'message',
                         type: 'string',
-                        example: 'Комментарий с таким id не существует')],
+                        example: 'Комментарий с предоствленным id не существует')],
                     type: 'object'))
         ]
     )]

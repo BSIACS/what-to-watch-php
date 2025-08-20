@@ -22,7 +22,7 @@ class CommentService
         }
 
         $comments = Comment::query()
-            ->select('comments.id', 'comments.text', 'comments.created_at', 'users.name')
+            ->select('comments.id', 'comments.text', 'comments.created_at', 'comments.comment_id', 'users.name')
             ->where('film_id', $id)
             ->leftJoin('users', 'comments.user_id', '=', 'users.id')
             ->get();

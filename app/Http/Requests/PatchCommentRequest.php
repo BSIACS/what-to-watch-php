@@ -10,7 +10,7 @@ use OpenApi\Attributes as OA;
 #[OA\Schema(
     schema: 'PatchCommentRequest',
     properties: [
-        new OA\Property(property: 'text', description: 'Comment content', type: 'string', example: 'Alice guessed who it was, even before she came upon a Gryphon, lying fast asleep in the act of crawling away: besides all this, there was no more of the cattle in the window, I only wish it was,\' he said. (Which he certainly did NOT, being made.', nullable: true),
+        new OA\Property(property: 'text', description: 'Текстовое содержимое комментария', type: 'string', example: 'Alice guessed who it was, even before she came upon a Gryphon, lying fast asleep in the act of crawling away: besides all this, there was no more of the cattle in the window, I only wish it was,\' he said. (Which he certainly did NOT, being made.', nullable: true),
     ],
     type: 'object',
 )]

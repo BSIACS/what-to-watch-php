@@ -21,16 +21,17 @@ class UserController extends Controller
 
     #[OA\Get(
         path: '/api/user',
-        description: 'Get user data',
-        summary: 'Get user data',
+        description: 'Предоставляет данные о профиля пользователя',
+        summary: 'Получение профиля пользователя',
         security: [["sanctumAuth" => []]],
         tags: ['User'],
-        parameters: [
-        ],
         responses: [new OA\Response(
             response: 200,
-            description: 'User data',
-            content: new OA\JsonContent(ref: '#/components/schemas/UserResource'))]
+            description: 'Данные профиля пользователя',
+            content: new OA\JsonContent(
+                properties: [new OA\Property(property: 'data', ref: '#/components/schemas/UserResource')],
+                type: 'object'
+            ))]
     )]
     public function getUser(): UserResource
     {
@@ -41,8 +42,8 @@ class UserController extends Controller
 
     #[OA\Post(
         path: '/api/user',
-        description: 'Get user data',
-        summary: 'Get user data',
+        description: 'Обновляет данные профиля пользователя',
+        summary: 'Обновление профиля пользователя',
         security: [["sanctumAuth" => []]],
         requestBody: new OA\RequestBody(
             required: true,
@@ -56,10 +57,13 @@ class UserController extends Controller
         ],
         responses: [new OA\Response(
             response: 200,
-            description: 'List of films',
-            content: new OA\JsonContent(ref: '#/components/schemas/UserResource'))]
+            description: 'Данные профиля пользователя',
+            content: new OA\JsonContent(
+                properties: [new OA\Property(property: 'data', ref: '#/components/schemas/UserResource')],
+                type: 'object'
+            ))]
     )]
-    public function patchUser(PatchUserRequest $request): UserResource|JsonResponse
+    public function patchUser(PatchUserRequest $request): UserResource | JsonResponse
     {
         try {
             $user = Auth::user();
@@ -74,8 +78,8 @@ class UserController extends Controller
 
     #[OA\Post(
         path: '/api/user/avatar',
-        description: 'Save user avatar',
-        summary: 'Save user avatar',
+        description: 'Сохраненяет аватар пользователя',
+        summary: 'Сохранение аватара пользователя',
         security: [["sanctumAuth" => []]],
         requestBody: new OA\RequestBody(
             required: true,
@@ -86,14 +90,11 @@ class UserController extends Controller
         tags: ['User'],
         responses: [new OA\Response(
                 response: 200,
-                description: 'Film with specified id not found',
+                description: 'Путь к аватару пользователя',
                 content: new OA\JsonContent(
-                    properties: [new OA\Property(
-                        property: 'avatarPath',
-                        type: 'string',
-                        example: 'ef7d1976-5cd5-4c99-9bdf-cbd2209f214e/avatar/KgoFL8KpEtajLXJ225JjcMBIbMlKbXVd.jpg')],
-                    type: 'object')
-        )]
+                    properties: [new OA\Property(property: 'data', ref: '#/components/schemas/AvatarPathResource')],
+                    type: 'object'
+            ))]
     )]
     public function saveOrReplaceUserAvatar(SaveOrReplaceUserAvatarRequest $request): JsonResponse
     {

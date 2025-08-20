@@ -3,13 +3,8 @@
 namespace App\Services;
 
 use App\Models\Genre;
-use App\Models\PersonalAccessToken;
-use App\Models\Role;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class GenreService
 {
@@ -18,11 +13,11 @@ class GenreService
         return User::query()->find($id);
     }
 
-    public function patch($id, $patchData)
+    public function patch($id, $patchData): void
     {
-        $genre = Genre::query()->whereId($id)->firstOrFail();
-        $genre->update($patchData);
+        $genre = Genre::query()->find($id);
+        $genre ?? throw new NotFoundHttpException('Жанр с предоствленным id не существует');
 
-        return $genre;
+        $genre->update($patchData);
     }
 }

@@ -21,16 +21,19 @@ class AuthController extends Controller
 
     #[OA\Post(
         path: '/api/register',
-        description: 'Process registration. New user is assigned "user" role',
-        summary: 'User registration',
+        description: 'Выполняет регистрацию. Пользователю присваивается роль "user".',
+        summary: 'Регистрация нового пользователя',
         requestBody: new OA\RequestBody(required: true, content: new OA\JsonContent(ref: '#/components/schemas/RegisterUserRequest')),
         tags: ['Auth'],
         parameters: [
         ],
         responses: [new OA\Response(
             response: 200,
-            description: 'List of films',
-            content: new OA\JsonContent(ref: '#/components/schemas/TokenResource'))]
+            description: 'Токен доступа',
+            content: new OA\JsonContent(
+                properties: [new OA\Property(property: 'data', ref: '#/components/schemas/TokenResource')],
+                type: 'object'
+            ))]
     )]
     public function register(RegisterUserRequest $request): TokenResource | JsonResponse
     {
@@ -49,16 +52,19 @@ class AuthController extends Controller
 
     #[OA\Post(
         path: '/api/login',
-        description: 'Process login',
-        summary: 'User login',
+        description: 'Выполняет аутентификацию пользователя.',
+        summary: 'Аутентификация пользователя',
         requestBody: new OA\RequestBody(required: true, content: new OA\JsonContent(ref: '#/components/schemas/LoginUserRequest')),
         tags: ['Auth'],
         parameters: [
         ],
         responses: [new OA\Response(
             response: 200,
-            description: 'List of films',
-            content: new OA\JsonContent(ref: '#/components/schemas/TokenResource'))]
+            description: 'Токен доступа',
+            content: new OA\JsonContent(
+                properties: [new OA\Property(property: 'data', ref: '#/components/schemas/TokenResource')],
+                type: 'object'
+            ))]
     )]
     public function login(LoginUserRequest $request): TokenResource | JsonResponse
     {
@@ -78,8 +84,8 @@ class AuthController extends Controller
 
     #[OA\Post(
         path: '/api/logout',
-        description: 'Process logout',
-        summary: 'User logout',
+        description: 'Удаляет токены доступа',
+        summary: 'Выход из системы',
         security: [["sanctumAuth" => []]],
         tags: ['Auth'],
         parameters: [

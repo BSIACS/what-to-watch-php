@@ -32,8 +32,11 @@ Route::middleware(['throttle:api', 'auth:sanctum', 'role:admin,moderator,user'])
 
 
 //GENRE CONTROLLER
-Route::middleware(['throttle:api', 'auth:sanctum', 'role:admin,moderator'])->group(function () {
+Route::middleware(['throttle:api'])->group(function () {
     Route::get('genre', [\App\Http\Controllers\GenreController::class, 'getAll']);
+});
+
+Route::middleware(['throttle:api', 'auth:sanctum', 'role:admin,moderator'])->group(function () {
     Route::patch('genre/{id}', [\App\Http\Controllers\GenreController::class, 'update']);
 });
 
@@ -84,7 +87,7 @@ Route::middleware(['throttle:api', 'auth:sanctum', 'role:admin,moderator'])->gro
 
 
 //FAVORITES CONTROLLER
-Route::middleware(['throttle:api', 'auth:sanctum', 'role:user'])->group(function () {
+Route::middleware(['throttle:api', 'auth:sanctum', 'role:admin,user'])->group(function () {
     Route::get('favorite', [\App\Http\Controllers\FavoritesController::class, 'getFavorites']);
     Route::post('films/{id}/favorite', [\App\Http\Controllers\FavoritesController::class, 'addToFavorites']);
     Route::delete('films/{id}/favorite', [\App\Http\Controllers\FavoritesController::class, 'removeFromFavorites']);

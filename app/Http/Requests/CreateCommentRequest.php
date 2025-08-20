@@ -9,8 +9,8 @@ use OpenApi\Attributes as OA;
 #[OA\Schema(
     schema: 'CreateCommentRequest',
     properties: [
-        new OA\Property(property: 'text', description: 'Comment content', type: 'string', example: 'Alice guessed who it was, even before she came upon a Gryphon, lying fast asleep in the act of crawling away: besides all this, there was no more of the cattle in the window, I only wish it was,\' he said. (Which he certainly did NOT, being made.', nullable: true),
-        new OA\Property(property: 'comment_id', description: 'Comment id. Id - if the comment refers to another comment, NULL - if the comment refers to film.', type: 'string', example: '03df3ff9-3a46-45c7-8f7c-e8fc54d6d458'),
+        new OA\Property(property: 'text', description: 'Текстовое содержимое комментария', type: 'string', example: 'Alice guessed who it was, even before she came upon a Gryphon, lying fast asleep in the act of crawling away: besides all this, there was no more of the cattle in the window, I only wish it was,\' he said. (Which he certainly did NOT, being made.', nullable: true),
+        new OA\Property(property: 'comment_id', description: 'Идентификатор комментария. Указывается, если комментарий ответ на другой комментарий.', type: 'string', example: '03df3ff9-3a46-45c7-8f7c-e8fc54d6d458'),
     ],
     type: 'object',
 )]
