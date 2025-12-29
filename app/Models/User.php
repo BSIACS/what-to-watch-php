@@ -32,6 +32,7 @@ class User extends Authenticatable
         'role_id',
         'avatar_path',
         'remember_token',
+        'email_verified_at'
     ];
 
     /**

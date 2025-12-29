@@ -6,6 +6,7 @@ use App\Http\Requests\PatchUserRequest;
 use App\Http\Requests\SaveOrReplaceUserAvatarRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\Interfaces\UserServiceInterface;
 use App\Services\UserAvatarStorageService;
 use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
@@ -16,7 +17,7 @@ use OpenApi\Attributes as OA;
 class UserController extends Controller
 {
     function __construct(
-        protected UserService $userService,
+        protected UserServiceInterface $userService,
         protected UserAvatarStorageService $userAvatarStorageService) {}
 
     #[OA\Get(
@@ -68,7 +69,7 @@ class UserController extends Controller
         try {
             $user = Auth::user();
 
-            $patchedUser = $this->userService->patch($user->id, $request->validated());
+            $patchedUser = $this->userService->update($user->id, $request->validated());
         } catch (\Exception $exception) {
             return new JsonResponse(['message' => $exception->getMessage()], 500);
         }

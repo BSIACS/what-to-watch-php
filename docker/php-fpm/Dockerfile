@@ -17,15 +17,8 @@ RUN docker-php-ext-install -j$(nproc) gd
 
 RUN apt install jpegoptim optipng pngquant gifsicle libavif-bin -y
 
-RUN apt-get install -y wget unzip curl
-#RUN curl -sS https://getcomposer.org/installer |php
-#RUN mv composer.phar /usr/local/bin/composer
-
-#-RUN rm -rf /var/www/html \
-RUN rm -rf /var/www/html/* \
- 	&& curl -sS https://getcomposer.org/installer | php \
-#-    && mv /composer.phar /usr/local/bin/composer
-    && mv /var/www/html/composer.phar /usr/local/bin/composer
+# ПРАВИЛЬНАЯ установка Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 COPY ./conf.d /usr/local/etc/php/conf.d/
 

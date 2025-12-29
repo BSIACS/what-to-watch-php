@@ -1,28 +1,34 @@
 <?php
 
 namespace App\Services;
-
-use App\Models\PersonalAccessToken;
-use App\Models\Role;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use App\Services\Interfaces\UserServiceInterface;
 
-class UserService
+
+class UserService implements UserServiceInterface
 {
-    public function getById($id): User|Builder
+    public function findById($id): ?User
     {
-        return User::query()->find($id);
+        return User::find($id);
     }
 
-    public function patch(string $id, mixed $patchData): User|Builder
+    public function update(string $userId, array $data): User
     {
-        $foundUser = User::query()->where('id', $id)->first();
-        $foundUser->update($patchData);
-        $foundUser->save();
+        $user = User::findOrFail($userId);
+        $user->update($data);
 
-        return $foundUser;
+        return $user->fresh();
+    }
+
+    public function updateIfExists(string $userId, array $data): ?User
+    {
+        $user = User::find($userId);
+
+        if ($user) {
+            $user->update($data);
+            return $user->fresh();
+        }
+
+        return null;
     }
 }

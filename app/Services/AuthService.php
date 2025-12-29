@@ -14,11 +14,9 @@ class AuthService
     {
     }
 
-    public function processRegister(string $name, string $email, string $password): string
+    public function processRegister(string $name, string $email, string $password)
     {
         $role = Role::query()->where('name', 'user')->first();
-
-        DB::beginTransaction();
 
         $user = User::create([
             "id" => Str::uuid(),
@@ -28,11 +26,7 @@ class AuthService
             "role_id" => $role->id,
         ]);
 
-        $token = $this->createToken($user);
-
-        DB::commit();
-
-        return $token;
+        return $user;
     }
 
     public function processLogin(string $email): string

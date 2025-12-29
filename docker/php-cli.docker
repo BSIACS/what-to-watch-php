@@ -10,12 +10,11 @@ RUN docker-php-ext-install exif
 RUN docker-php-ext-enable exif
 
 
-RUN apt-get install -y wget unzip curl
-RUN curl -sS https://getcomposer.org/installer |php
-RUN mv composer.phar /usr/local/bin/composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 RUN apt-get install -y cron
 
 USER 1000:1000
 
 WORKDIR /var/www
+

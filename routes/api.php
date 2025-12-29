@@ -21,6 +21,8 @@ Route::middleware(['throttle:api'])->group(function () {
 });
 
 Route::middleware(['throttle:api', 'auth:sanctum'])->post('logout', [\App\Http\Controllers\AuthController::class, 'logout']);
+Route::middleware(['throttle:api'])->get('email/verify-email', [\App\Http\Controllers\AuthController::class, 'verifyEmail']);
+Route::middleware(['throttle:api', 'auth:sanctum'])->post('email/resend-verification-link', [\App\Http\Controllers\AuthController::class, 'resendVerificationLink']);
 
 
 //USER CONTROLLER
